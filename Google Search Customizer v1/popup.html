@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Hello World</title>
+        <script src="popup.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h3 id="greet">Google Search Customizer Settings</h3>
+        <div id="optionsWrapper">
+            <input type="checkbox" id="leaveLinkCheckBox" class="checkbox" name="leaveLink" value="link"> Link<br>
+            <!--<input type="checkbox" id="leaveArrowCheckBox" class="checkbox" name="leaveArrow" value="arrow"> Arrow<br>-->
+            <input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move"> Move link<br>
+
+            <h5 id="adTitle">Ad Settings</h5>
+            <div id="radioWrapper">
+                <input type="radio" class="adsDisplay" name="adVisibility" value="remove"> Remove<br>
+                <input type="radio" class="adsDisplay" name="adVisibility" value="normal"> Normal<br>
+                <input type="radio" class="adsDisplay" name="adVisibility" value="standOut1"> Stand Out<br>
+                <input type="radio" class="adsDisplay" name="adVisibility" value="standOut2"> Really Stand Out<br>
+            </div>
+
+            <input type="checkbox" id="pureSearchResultsCheckBox" class="checkbox" name="pureSearchResults" value="pureResults"> Only Show Pure Results<br>
+
+            <button id="defaultSettings">Restore Defaults</button>
+            <br>
+            <p id="message">Please refresh the page for the changes to take full effect!</p>
+        </div>
+    </body>
+</html>

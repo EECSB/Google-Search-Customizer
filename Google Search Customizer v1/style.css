@@ -1,0 +1,30 @@
+#optionsWrapper{
+    width: 250px;
+    font-size: 15px;
+}
+
+.checkbox{
+    margin-bottom: 8px;
+}
+
+#radioWrapper{
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+#adTitle{
+    margin: 0;
+}
+
+#defaultSettings{
+    margin-top: 15px;
+}
+
+a{
+    margin-top: 15px;
+    display: inline-block;
+}
+
+#message{
+    color: red;
+}
