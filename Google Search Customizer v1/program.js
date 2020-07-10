@@ -1,9 +1,10 @@
-//Initialization/////////////////////////////////////////////////////////////////
+//Initialization///////////////////////////////////////////////////////////
 
 let configuration = {
     "leaveLink" : true,
     "leaveArrow" : false,
-    "moveLink": true,
+    "moveLink": false,
+    "colorLink": true,
     "adsDisplay" : "standOut2", //"remove", "standOut1", "standOut2"
     "onlyShowPureSerachResults" : false,
     "linkColor" : "green",
@@ -23,10 +24,10 @@ chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
 
 
 
-/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 
-//Receive data from popup.js/////////////////////////////////////////////
+//Receive data from popup.js////////////////////////////////////////////
 
 chrome.runtime.onMessage.addListener(receivedMessage);
 
@@ -41,7 +42,6 @@ function receivedMessage(message, sender, response){
 
 function modifySearchResults(configuration){
     /////////////////////////////////////////////////////////////////////////
-
     if(configuration.leaveLink){
         //Remove just the icon and leave the link.
         removeElements(".xA33Gc", 0);
@@ -58,7 +58,7 @@ function modifySearchResults(configuration){
     }
 
     /////////////////////////////////////////////////////////////////////////
-
+    //
 
     /////////////////////////////////////////////////////////////////////////
 
@@ -100,7 +100,7 @@ function modifySearchResults(configuration){
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section.
         removeElements("#tads", 0);
-        ////Remove whole ad section.
+        //Remove whole ad section.
         removeElements(".ads-ad", 0);
     }
 
@@ -108,6 +108,8 @@ function modifySearchResults(configuration){
 
 
     /////////////////////////////////////////////////////////////////////////
+
+    /*
 
     if(configuration.moveLink){
         cutPasteLink();
@@ -125,6 +127,8 @@ function modifySearchResults(configuration){
         decreaseResultDistance("TbwUpd"); //Normal results.
     }
 
+    */
+
     /////////////////////////////////////////////////////////////////////////
 
 
@@ -136,14 +140,23 @@ function modifySearchResults(configuration){
 
         //"People also ask" remove.
         removeElements(".xpdopen", 2);
+
+        //Remove maps
+        removeElements(".AEprdc", 1);
+
+        //Remove sidebar with information
+        removeElements(".liYKde", 1);
+        
     }
 
     /////////////////////////////////////////////////////////////////////////
 
 
     /////////////////////////////////////////////////////////////////////////
-
-    setLinkColor(configuration.linkColor);
+    
+    if(configuration.colorLink){
+        setLinkColor(configuration.linkColor);
+    }
 
     /////////////////////////////////////////////////////////////////////////
 }
@@ -169,11 +182,11 @@ function cutPasteLink(){
     }
 
     for (let i = 0; i < elements.length; i++){
-        if(!elementsConst[i].includes("qks8td")){
+        if(/*!elementsConst[i].includes("NJjxre")*/true){
             let element = elements[i];
             let parentElement = element.parentNode.parentNode.parentNode;
             
-            elements[i].parentNode.removeChild(elements[i]);
+            //elements[i].parentNode.removeChild(elements[i]);
     
             insertBeforeElement = parentElement.childNodes[1]
     

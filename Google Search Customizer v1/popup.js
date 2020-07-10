@@ -23,7 +23,7 @@ window.addEventListener('load', (event) => {
         changeConfig("leaveLink", value);
     });
 
-    /*document.getElementById("leaveArrowCheckBox").addEventListener("change", event =>{
+    document.getElementById("leaveArrowCheckBox").addEventListener("change", event =>{
         let value;
 
         if(event.target.checked){
@@ -33,7 +33,7 @@ window.addEventListener('load', (event) => {
         }
 
         changeConfig("leaveArrow", value);
-    });*/
+    });
 
     document.getElementById("moveCheckBox").addEventListener("change", event =>{
         let value;
@@ -45,6 +45,18 @@ window.addEventListener('load', (event) => {
         }
 
         changeConfig("moveLink", value);
+    });
+
+    document.getElementById("colorLinkCheckBox").addEventListener("change", event =>{
+        let value;
+
+        if(event.target.checked){
+            value = true;
+        }else{
+            value = false;
+        }
+
+        changeConfig("colorLink", value);
     });
 
     document.getElementById("pureSearchResultsCheckBox").addEventListener("change", event =>{
@@ -68,6 +80,7 @@ window.addEventListener('load', (event) => {
                 "leaveLink": true,
                 "leaveArrow": false,
                 "moveLink": true,
+                "colorLink": true,
                 "adsDisplay": "standOut2", //"remove", "standOut1", "standOut2"
                 "onlyShowPureSerachResults": false,
                 "linkColor": "green",
@@ -101,8 +114,9 @@ window.addEventListener('load', (event) => {
 
     function setUI(configuration){
         document.getElementById("leaveLinkCheckBox").checked = configuration.leaveLink;
-        //document.getElementById("leaveArrowCheckBox").checked = configuration.leaveArrow;
+        document.getElementById("leaveArrowCheckBox").checked = configuration.leaveArrow;
         document.getElementById("moveCheckBox").checked = configuration.moveLink;
+        document.getElementById("colorLinkCheckBox").checked = configuration.colorLink;
         document.getElementById("pureSearchResultsCheckBox").checked = configuration.onlyShowPureSerachResults;
 
         var classname = document.getElementsByClassName("adsDisplay");
