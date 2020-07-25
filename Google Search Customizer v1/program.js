@@ -107,10 +107,15 @@ function modifySearchResults(configuration){
 
         if(configuration.adsDisplay == "standOut2"){
             tawElement = document.getElementById("tvcap");
+            let adsbottom = document.getElementById("bottomads");
 
-            if(tawElement != undefined){
+            //Color top ads if present.
+            if(tawElement != undefined)
                 tawElement.style.backgroundColor = configuration.adBackgroundColor;
-            } 
+
+            //Color bottom ads if present.
+            if(tawElement != undefined)
+                adsbottom.style.backgroundColor = configuration.adBackgroundColor;
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section.
