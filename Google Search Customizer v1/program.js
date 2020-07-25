@@ -1,27 +1,42 @@
-//Initialization///////////////////////////////////////////////////////////
+//Check if this is actually the Google search engine and not some other google site.
+function isSearch(){
+    const classname = document.getElementsByClassName("RNNXgb"); //class present on on of the divs of the Google search bar.
 
-let configuration = {
-    "leaveLink" : true,
-    "leaveArrow" : false,
-    "moveLink": false,
-    "colorLink": true,
-    "adsDisplay" : "standOut2", //"remove", "standOut1", "standOut2"
-    "onlyShowPureSerachResults" : false,
-    "linkColor" : "green",
-    "adBackgroundColor" : "antiquewhite"
-};
+    if(classname != undefined && classname != null)
+        return true;
+    else
+        return false;
+}
 
-//Store defaults if nothing is stored.
-chrome.storage.sync.get(['configuration'], function(storedConfiguration) { 
-    if('configuration' in storedConfiguration){
-        configuration = storedConfiguration;
-    }else{
-        chrome.storage.sync.set({'configuration': configuration}, function(){});
-    }
+//Get URL od current page.
+const url = window.location.href;
 
-    modifySearchResults(configuration["configuration"]);
-});
+//Only run on Google domain.
+if(url.includes(".google.") && isSearch()){
+    //Initialization///////////////////////////////////////////////////////////
 
+    let configuration = {
+        "leaveLink" : true,
+        "leaveArrow" : false,
+        "moveLink": false,
+        "colorLink": true,
+        "adsDisplay" : "standOut2", //"remove", "standOut1", "standOut2"
+        "onlyShowPureSerachResults" : false,
+        "linkColor" : "green",
+        "adBackgroundColor" : "antiquewhite"
+    };
+
+    //Store defaults if nothing is stored.
+    chrome.storage.sync.get(['configuration'], function(storedConfiguration) { 
+        if('configuration' in storedConfiguration){
+            configuration = storedConfiguration;
+        }else{
+            chrome.storage.sync.set({'configuration': configuration}, function(){});
+        }
+
+        modifySearchResults(configuration["configuration"]);
+    });
+}
 
 
 ////////////////////////////////////////////////////////////////////////

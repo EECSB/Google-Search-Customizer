@@ -17,7 +17,7 @@
 
   "content_scripts": [{
     "matches": [
-      "*://*.google.com/*"
+      "<all_urls>"
     ],
     "js": ["program.js"]
   }],
