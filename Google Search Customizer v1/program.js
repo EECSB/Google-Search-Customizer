@@ -106,8 +106,10 @@ function modifySearchResults(configuration){
         }
 
         if(configuration.adsDisplay == "standOut2"){
-            tawElement = document.getElementById("tvcap");
+            let tawElement = document.getElementById("tvcap");
             let adsbottom = document.getElementById("bottomads");
+
+            //background-color: antiquewhite;
 
             //Color top ads if present.
             if(tawElement != undefined)
@@ -116,6 +118,14 @@ function modifySearchResults(configuration){
             //Color bottom ads if present.
             if(tawElement != undefined)
                 adsbottom.style.backgroundColor = configuration.adBackgroundColor;
+            
+            if(tawElement != undefined){
+                ApplyToClass("waTp2e", function(element){
+                    //Color ads.
+                    element.style.backgroundColor = configuration.adBackgroundColor;
+                    element.style.padding = "10px 10px 10px 10px";
+                });
+            }
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section.
@@ -129,7 +139,7 @@ function modifySearchResults(configuration){
 
     /////////////////////////////////////////////////////////////////////////
 
-    /*
+    
 
     if(configuration.moveLink){
         cutPasteLink();
@@ -147,7 +157,7 @@ function modifySearchResults(configuration){
         decreaseResultDistance("TbwUpd"); //Normal results.
     }
 
-    */
+    
 
     /////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +192,9 @@ function modifySearchResults(configuration){
 }
 
 
+function insertAfter(newNode, referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
 
 function setLinkColor(linkColor){
     if(linkColor != ""){
@@ -195,6 +208,7 @@ function setLinkColor(linkColor){
 
 function cutPasteLink(){
     let elements = document.getElementsByClassName("TbwUpd");
+    let elementsArrow = document.getElementsByClassName("eFM0qc");
     let elementsConst = [];
 
     for (let i = 0; i < elements.length; i++){
@@ -202,16 +216,24 @@ function cutPasteLink(){
     }
 
     for (let i = 0; i < elements.length; i++){
-        if(/*!elementsConst[i].includes("NJjxre")*/true){
-            let element = elements[i];
-            let parentElement = element.parentNode.parentNode.parentNode;
+        if(!elementsConst[i].includes("NJjxre")){
+            let element = elements[i]; //Get link element.
+            let parentElement = element.parentNode.parentNode; //Get parent element
             
-            //elements[i].parentNode.removeChild(elements[i]);
-    
-            insertBeforeElement = parentElement.childNodes[1]
-    
-            parentElement.insertBefore(element, insertBeforeElement);
-        } 
+            //Get the element before which the link has to be inserted.
+            insertBeforeElement = parentElement.childNodes[0];
+            
+            //insert element in new position.
+            insertAfter(element, insertBeforeElement); //parentElement.insertBefore(element, insertBeforeElement);
+        }
+    }
+
+    for (let i = elements.length; i > 0; i--){
+        if(elementsConst[i].includes("NJjxre")){
+            //Remove element.
+            elements[i].parentNode.removeChild(elements[i]);
+            elementsConst[i]
+        }
     }
 }
 
@@ -232,7 +254,8 @@ function cutPasteLinkAds(){
     
             insertBeforeElement = parentElement.childNodes[1]
     
-            parentElement.insertBefore(element, insertBeforeElement);
+            //parentElement.insertBefore(element, insertBeforeElement);
+
         } 
     }
 }
@@ -298,6 +321,14 @@ function getParentNode(element, parentNum){
     }
 
     return parent;
+}
+
+function ApplyToClass(className, delegate){
+    let elements = document.getElementsByClassName(className);
+
+    for (let i = 0; i < elements.length; i++){
+        delegate(elements[i]);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
