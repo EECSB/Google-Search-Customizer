@@ -16,14 +16,15 @@ if(url.includes(".google.") && isSearch()){
     //Initialization///////////////////////////////////////////////////////////
 
     let configuration = {
-        "leaveLink" : true,
-        "leaveArrow" : false,
-        "moveLink": false,
-        "colorLink": true,
-        "adsDisplay" : "standOut2", //"remove", "standOut1", "standOut2"
+        "removeUrl" : false,
+        "removeArrow" : false,
+        "moveUrl": false,
+        "colorUrl": false,
+        "adsDisplay" : "normal", //"remove", "standOut1", "standOut2"
         "onlyShowPureSerachResults" : false,
-        "linkColor" : "green",
-        "adBackgroundColor" : "antiquewhite"
+        "UrlColor" : "green",
+        "adBackgroundColor" : "antiquewhite",
+        "removeEmojis": false
     };
 
     //Store defaults if nothing is stored.
@@ -53,42 +54,31 @@ function receivedMessage(message, sender, response){
 /////////////////////////////////////////////////////////////////////////
 
 
-//Functions//////////////////////////////////////////////////////////////
+//Main Function//////////////////////////////////////////////////////////////
 
 function modifySearchResults(configuration){
-    /////////////////////////////////////////////////////////////////////////
-    if(configuration.leaveLink){
-        //Remove just the icon and leave the link.
-        removeElements(".xA33Gc", 0);
-        //Remove just the icon and leave the link on the litle pages thingy that appears.
-        removeElements(".Oe4cyf", 0);
-    }else{
-        //Remove link and icon.
+    //Remove Url////////////////////////////////////////////////////////
+    if(configuration.removeUrl){
+        //Remove url and icon.
         removeElements(".TbwUpd", 0);
-        //Remove link and icon on the litle pages thingy that appears.
+        //Remove url and icon on the litle pages thingy that appears.
         removeElements(".qdrjAc", 0);
 
         //Decrease distance between results.
         decreaseResultDistance("TbwUpd"); //Normal results.
     }
 
-    /////////////////////////////////////////////////////////////////////////
-    //
 
-    /////////////////////////////////////////////////////////////////////////
-
-    if(!configuration.leaveArrow){
+    //Remove arrows at the end of urls////////////////////////////////////
+    if(configuration.removeArrow || configuration.removeUrl || configuration.moveUrl){
         //Remove arrow.
         removeElements(".B6fmyf", 0);
         //Remove arrow from ad.
         removeElements(".e1ycic", 0);
     }
 
-    /////////////////////////////////////////////////////////////////////////
 
-
-    /////////////////////////////////////////////////////////////////////////
-
+    //Modify Ads///////////////////////////////////////////////////////////////////////
     if(configuration.adsDisplay == "standOut1" || configuration.adsDisplay == "standOut2"){
         //Make ad more obvious.
         let element = document.getElementsByClassName("VqFMTc");
@@ -134,93 +124,131 @@ function modifySearchResults(configuration){
         removeElements(".ads-ad", 0);
     }
 
-    /////////////////////////////////////////////////////////////////////////
-
-
-    /////////////////////////////////////////////////////////////////////////
-
     
-
-    if(configuration.moveLink){
-        cutPasteLink();
-        cutPasteLinkPagesThingy();
+    //Move Url////////////////////////////////////////////////////////////////
+    if(configuration.moveUrl){
+        cutPasteUrl();
+        cutPasteUrlPagesThingy();
         
         //Decrease distance between results.
         decreaseResultDistance("TbwUpd"); //Normal results.
     }
 
-    if(configuration.moveLink && (configuration.adsDisplay != "remove")){
-        cutPasteLinkAds();
+
+    //MoveUrl////////////////////////////////////////////////////////////////
+    if(configuration.moveUrl && (configuration.adsDisplay != "remove")){
+        cutPasteUrlAds();
         
         //Decrease distance between results.
         decreaseResultDistance("sA5rQ"); //Ads
         decreaseResultDistance("TbwUpd"); //Normal results.
     }
 
-    
 
-    /////////////////////////////////////////////////////////////////////////
-
-
-    /////////////////////////////////////////////////////////////////////////
-
+    //Only Show Pure Search Results///////////////////////////////////////////
     if(configuration.onlyShowPureSerachResults){
         //Remove all BS except pure results. 
         removeElements(".e2BEnf", 1);
-
-        //"People also ask" remove.
+        //Remove "People also ask".
         removeElements(".xpdopen", 2);
-
-        //Remove maps
+        //Remove maps.
         removeElements(".AEprdc", 1);
-
-        //Remove sidebar with information
+        //Remove sidebar with information.
         removeElements(".liYKde", 1);
-        
+        //Remove ratings.
+        removeElements(".dhIWPd", 1);
+        //Remove ratings 2.
+        removeElements(".fG8Fp", 0);
     }
 
-    /////////////////////////////////////////////////////////////////////////
 
-
-    /////////////////////////////////////////////////////////////////////////
-    
-    if(configuration.colorLink){
-        setLinkColor(configuration.linkColor);
+    //Color Url////////////////////////////////////////////////////////////////
+    if(configuration.colorUrl){
+        //Set url color
+        setUrlColor(configuration.urlColor);
+        //Set url color in ads.
+        setUrlColorAds(configuration.urlColor);
     }
 
-    /////////////////////////////////////////////////////////////////////////
+
+    //Remove emojis//////////////////////////////////////////////////////////////
+    if(configuration.removeEmojis){
+        //Make list of elements to be processed.
+        let listOfElementLists = [
+            document.getElementsByClassName("LC20lb"), 
+            document.getElementsByClassName("st"),
+            document.getElementsByClassName("cbphWd"),
+            document.getElementsByClassName("fl")
+        ]; 
+
+        //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
+        forEachDoThis(listOfElementLists, function(element){
+            element.innerText = element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+        });
+    }
+
+
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
-function insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
 
-function setLinkColor(linkColor){
-    if(linkColor != ""){
-        links = document.getElementsByClassName("iUh30");
 
-        for(let i = 0; links.length > i; i++){
-            links[i].style.color = linkColor;
-        }
+//Search results modification functions/////////////////////////////////////////
+
+function setUrlColor(urlColor){
+    if(urlColor != ""){
+        let listOfElementLists = [
+            document.getElementsByClassName("iUh30")//, //url part
+            //document.getElementsByClassName("eipWBe"); //urn part
+        ]
+
+        //Set the text color for each element.
+        forEachDoThis(listOfElementLists, function(element){
+            element.style.color = urlColor;
+        });
     }
 }
 
-function cutPasteLink(){
+function setUrlColorAds(urlColor){
+    if(urlColor != ""){
+        let urls = document.getElementsByClassName("gBIQub"); 
+
+        for(let i = 0; urls.length > i; i++)
+            urls[i].style.color = urlColor;
+    }
+}
+
+function cutPasteUrl(){
     let elements = document.getElementsByClassName("TbwUpd");
     let elementsArrow = document.getElementsByClassName("eFM0qc");
-    let elementsConst = [];
 
-    for (let i = 0; i < elements.length; i++){
-        elementsConst.push(elements[i].getAttribute('class'));
+    //Set elements to flex to always push url under title.
+    for(let i = 0; i < elements.length; i++){
+        elements[i].style.display = "flex";
     }
 
+    let elementsG = document.getElementsByClassName("g");
+    //Decrese margin.
+    for(let i = 0; i < elementsG.length; i++){
+        elementsG[i].style.margin = "0px 0px 20px 0px";
+    }
+    
+    //Remove <br>.
+    for(let i = 0; i < elements.length; i++){
+        let brTags = elements[i].parentNode.getElementsByTagName("BR");
+        for(berTag of brTags){
+            berTag.parentNode.removeChild(berTag);
+        }
+    }
+
+    //Insert url into new position.
     for (let i = 0; i < elements.length; i++){
-        if(!elementsConst[i].includes("NJjxre")){
-            let element = elements[i]; //Get link element.
+        if(!elements[i].className.includes("NJjxre")){
+            let element = elements[i]; //Get url element.
             let parentElement = element.parentNode.parentNode; //Get parent element
             
-            //Get the element before which the link has to be inserted.
+            //Get the element before which the url has to be inserted.
             insertBeforeElement = parentElement.childNodes[0];
             
             //insert element in new position.
@@ -228,39 +256,34 @@ function cutPasteLink(){
         }
     }
 
-    for (let i = elements.length; i > 0; i--){
-        if(elementsConst[i].includes("NJjxre")){
+    //Remove elements.
+    for (let i = 0; elements.length > i; i++){
+        if(elements[i].className.includes("NJjxre")){
             //Remove element.
             elements[i].parentNode.removeChild(elements[i]);
-            elementsConst[i]
+            i--;
         }
     }
 }
 
-function cutPasteLinkAds(){
+function cutPasteUrlAds(){
     let elements = document.getElementsByClassName("ads-visurl");
-    let elementsConst = [];
-
+    
     for (let i = 0; i < elements.length; i++){
-        elementsConst.push(elements[i].getAttribute('class'));
-    }
-
-    for (let i = 0; i < elements.length; i++){
-        if(!elementsConst[i].includes("nYN2jf")){
-            let element = elements[i];
-            let parentElement = element.parentNode.parentNode.parentNode/*.parentNode*/;
+        if(!elements[i].className.includes("NJjxre")){
+            let element = elements[i]; //Get url element.
+            let parentElement = element.parentNode.parentNode; //Get parent element
             
-            elements[i].parentNode.removeChild(elements[i]);
-    
-            insertBeforeElement = parentElement.childNodes[1]
-    
-            //parentElement.insertBefore(element, insertBeforeElement);
-
-        } 
+            //Get the element before which the url has to be inserted.
+            insertBeforeElement = parentElement.childNodes[0];
+            
+            //insert element in new position.
+            insertAfter(element, insertBeforeElement); //parentElement.insertBefore(element, insertBeforeElement);
+        }
     }
 }
 
-function cutPasteLinkPagesThingy(){
+function cutPasteUrlPagesThingy(){
     let elements = document.getElementsByClassName("qdrjAc");
     let elementsConst = [];
 
@@ -287,38 +310,42 @@ function decreaseResultDistance(className){
 
     for (let i = 0; i < elements.length; i++){
         br = elements[i].parentNode.getElementsByTagName('br');
-        if(br.length != 0){
+        if(br.length != 0)
             br[0].parentNode.removeChild(br[0]);
-        }
     }
 }
 
-function removeElements(name, parentNum){
-    let elements;
+////////////////////////////////////////////////////////////////////////////////
 
+
+
+//Utils/////////////////////////////////////////////////////////////////////////
+
+function removeElements(name, parentNum){
     if(name[0] == '.'){
         name = name.replace('.', '');
-        elements = document.getElementsByClassName(name);
+        const elements = document.getElementsByClassName(name);
+
+        for (let i = 0; i < elements.length; i++){
+            let node = getParentNode(elements[i], parentNum);
+            node.style.display = 'none';
+        }
     }else if(name[0] == '#'){
         name = name.replace('#', '');
-        elements = document.getElementById(name);
+        const element = document.getElementById(name);
+
+        if(element != null)
+            getParentNode(element, parentNum).style.display = 'none';
     }else{
         throw "Undefined element!";
-    }
-
-    for (let i = 0; i < elements.length; i++){
-
-        let node = getParentNode(elements[i], parentNum);
-        node.style.display = 'none';
     }
 }
 
 function getParentNode(element, parentNum){
     let parent = element;
 
-    for(let i = 0; parentNum > i; i++){
+    for(let i = 0; parentNum > i; i++)
         parent = parent.parentNode
-    }
 
     return parent;
 }
@@ -326,9 +353,20 @@ function getParentNode(element, parentNum){
 function ApplyToClass(className, delegate){
     let elements = document.getElementsByClassName(className);
 
-    for (let i = 0; i < elements.length; i++){
+    for (let i = 0; i < elements.length; i++)
         delegate(elements[i]);
+}
+
+function forEachDoThis(listOfElementLists, delegate){
+    for(let elementList of listOfElementLists){
+        for(element of elementList){
+            delegate(element);
+        }
     }
 }
 
-/////////////////////////////////////////////////////////////////////////
+function insertAfter(newNode, referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+/////////////////////////////////////////////////////////////////////////////////

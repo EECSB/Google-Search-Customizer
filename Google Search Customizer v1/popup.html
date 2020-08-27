@@ -9,20 +9,27 @@
     <body>
         <h3 id="greet">Google Search Customizer Settings</h3>
         <div id="optionsWrapper">
-            <input type="checkbox" id="leaveLinkCheckBox" class="checkbox" name="leaveLink" value="link"> Link<br>
-            <input type="checkbox" id="leaveArrowCheckBox" class="checkbox" name="leaveArrow" value="arrow"> Link Arrow<br>
-            <input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move"> Move link<br>
-            <input type="checkbox" id="colorLinkCheckBox" class="checkbox" name="colorLink" value="color"> Color link<br>
+            <h5 id="adTitle">URL Position and Apperance</h5>
+            <div class="controlsWrapper">
+                <input type="checkbox" id="removeUrlCheckBox" class="checkbox" name="removeUrl" value="url"> Remove URL<br>
+                <input type="checkbox" id="removeArrowCheckBox" class="checkbox" name="removeArrow" value="arrow"> Remove Arrow after URL<br>
+                <input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move"> Move URL<br>
+                <input type="checkbox" id="colorUrlCheckBox" class="checkbox" name="colorUrl" value="color"> Color URL<br>
+            </div>
 
             <h5 id="adTitle">Ad Settings</h5>
-            <div id="radioWrapper">
+            <div id="radioWrapper" class="controlsWrapper">
                 <input type="radio" class="adsDisplay" name="adVisibility" value="remove"> Remove<br>
                 <input type="radio" class="adsDisplay" name="adVisibility" value="normal"> Normal<br>
                 <input type="radio" class="adsDisplay" name="adVisibility" value="standOut1"> Stand Out<br>
                 <input type="radio" class="adsDisplay" name="adVisibility" value="standOut2"> Really Stand Out<br>
             </div>
 
-            <input type="checkbox" id="pureSearchResultsCheckBox" class="checkbox" name="pureSearchResults" value="pureResults"> Only Show Pure Results<br>
+            <h5 id="adTitle">Additional Settings</h5>
+            <div class="controlsWrapper">
+                <input type="checkbox" id="pureSearchResultsCheckBox" class="checkbox" name="pureSearchResults" value="pureResults"> Only Show Pure Results<br>
+                <input type="checkbox" id="removeEmojisCheckBox" class="checkbox" name="removeEmojis" value="emoji"> Remove Emojis<br>
+            </div>
 
             <button id="defaultSettings">Restore Defaults</button>
             <br>

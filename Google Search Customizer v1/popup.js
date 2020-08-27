@@ -2,75 +2,37 @@
 
 window.addEventListener('load', (event) => {
     //Initialization////////////////////////////////////////////////////
-
     chrome.storage.sync.get(['configuration'], function(configuration) { 
         setUI(configuration["configuration"]);
     });
 
     ////////////////////////////////////////////////////////////////////
 
-
     //Events////////////////////////////////////////////////////////////
 
     //Checkbox events//////////////////////
-    document.getElementById("leaveLinkCheckBox").addEventListener("change", event =>{
-        let value;
-
-        if(event.target.checked){
-            value = true;
-        }else{
-            value = false;
-        }
-
-        changeConfig("leaveLink", value);
+    document.getElementById("removeUrlCheckBox").addEventListener("change", event =>{
+        changeConfig("removeUrl", event.target.checked);
     });
 
-    document.getElementById("leaveArrowCheckBox").addEventListener("change", event =>{
-        let value;
-
-        if(event.target.checked){
-            value = true;
-        }else{
-            value = false;
-        }
-
-        changeConfig("leaveArrow", value);
+    document.getElementById("removeArrowCheckBox").addEventListener("change", event =>{
+        changeConfig("removeArrow", event.target.checked);
     });
 
     document.getElementById("moveCheckBox").addEventListener("change", event =>{
-        let value;
-
-        if(event.target.checked){
-            value = true;
-        }else{
-            value = false;
-        }
-
-        changeConfig("moveLink", value);
+        changeConfig("moveUrl", event.target.checked);
     });
 
-    document.getElementById("colorLinkCheckBox").addEventListener("change", event =>{
-        let value;
-
-        if(event.target.checked){
-            value = true;
-        }else{
-            value = false;
-        }
-
-        changeConfig("colorLink", value);
+    document.getElementById("colorUrlCheckBox").addEventListener("change", event =>{
+        changeConfig("colorUrl", event.target.checked);
     });
 
     document.getElementById("pureSearchResultsCheckBox").addEventListener("change", event =>{
-        let value;
+        changeConfig("onlyShowPureSerachResults",event.target.checked);
+    });
 
-        if(event.target.checked){
-            value = true;
-        }else{
-            value = false;
-        }
-
-        changeConfig("onlyShowPureSerachResults", value);
+    document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
+        changeConfig("removeEmojis", event.target.checked);
     });
     
     //Button///////////////
@@ -79,14 +41,15 @@ window.addEventListener('load', (event) => {
     function restoreDefaultConfig(){
         const defaultConfiguration = {
             "configuration":{
-                "leaveLink": true,
-                "leaveArrow": false,
-                "moveLink": true,
-                "colorLink": true,
-                "adsDisplay": "standOut2", //"remove", "standOut1", "standOut2"
+                "removeUrl": false,
+                "removeArrow": false,
+                "moveUrl": false,
+                "colorUrl": false,
+                "adsDisplay": "normal", //"remove", "standOut1", "standOut2"
                 "onlyShowPureSerachResults": false,
-                "linkColor": "green",
-                "adBackgroundColor": "antiquewhite"
+                "urlColor": "green",
+                "adBackgroundColor": "antiquewhite",
+                "removeEmojis": false
             }
         }
 
@@ -115,11 +78,12 @@ window.addEventListener('load', (event) => {
     //Functions////////////////////////////////////////////////////////////
 
     function setUI(configuration){
-        document.getElementById("leaveLinkCheckBox").checked = configuration.leaveLink;
-        document.getElementById("leaveArrowCheckBox").checked = configuration.leaveArrow;
-        document.getElementById("moveCheckBox").checked = configuration.moveLink;
-        document.getElementById("colorLinkCheckBox").checked = configuration.colorLink;
+        document.getElementById("removeUrlCheckBox").checked = configuration.removeUrl;
+        document.getElementById("removeArrowCheckBox").checked = configuration.removeArrow;
+        document.getElementById("moveCheckBox").checked = configuration.moveUrl;
+        document.getElementById("colorUrlCheckBox").checked = configuration.colorUrl;
         document.getElementById("pureSearchResultsCheckBox").checked = configuration.onlyShowPureSerachResults;
+        document.getElementById("removeEmojisCheckBox").checked = configuration.removeEmojis;
 
         var classname = document.getElementsByClassName("adsDisplay");
 
@@ -129,7 +93,7 @@ window.addEventListener('load', (event) => {
             }
         }
 
-        //= configuration.linkColor;
+        //= configuration.urlColor;
         //= configuration.adBackgroundColor;
     }
 
@@ -137,9 +101,9 @@ window.addEventListener('load', (event) => {
         chrome.storage.sync.get(['configuration'], function(configuration) { 
             configuration["configuration"][key] = value;
 
-            sendToProgramJS(configuration);
-
             chrome.storage.sync.set({'configuration': configuration["configuration"]}, function(){});
+
+            sendToProgramJS(configuration);
         });
     }
 
