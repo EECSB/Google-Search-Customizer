@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "Google Search Customizer",
+  "name": "Google Search Ad Remover And Customizer",
   "description": "This extension gives you the ability to customize how your google search results look like.",
   "version": "1.1.2",
   "icons": {
