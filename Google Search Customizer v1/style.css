@@ -76,3 +76,8 @@ a{
     visibility: visible;
     opacity: 1;
   }
+
+.link{
+    font-size: 13px;
+    margin-top: 1px;
+}
