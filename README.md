@@ -1,4 +1,5 @@
 # Google-Search-Customizer
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/icon280.png)
 
 ## What does this extension do?
 
@@ -8,6 +9,28 @@ This extension allows you to customize how your Google Search results are displa
 -   Remove, Make the Ads stand out(make ad more obvious, make ad really obvious).
 -   Remove Emojis from titles and descriptions of search results.
 -   Remove other stuff Google inserts in the search results("People also ask", "Top News",  …).
+
+## Examples:
+
+This is the extension settings menu where you can select how your search results appear. 
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/UI.png)
+
+
+This demonstrates what the controls under **URL Position and Apperance** do. Remove the url(**remove url**), remove arrow after the irl(**remove arrow after url**), color the url green(**color url**), move the url bellow the title(**move url**). 
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/url-settings.png)
+
+
+This demonstrates what the controls under **Ad Settings** do. You can keep the ads the way they are(**normal**), remove them(**remove**), make them stand out a bit more by putting a green ad marker before the url(**stand out**), do what the stand out option does and also color the background of the ads(**really stand out**).
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/ad-settings.png)
+
+
+The **Only Show Pure Results** option will remove any "widgets" that Google decides to put in the search results such as "People also ask", "Twitter", "Top stories", "the side widget thing", ... 
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/show-only-pure-results.png =5x5)
+
+
+The **Remove emojis** option will well... remove all the emojis from the search results.
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/remove-emojis.png)
+
 
 ## Why I made it?
 
