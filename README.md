@@ -25,7 +25,7 @@ This demonstrates what the controls under **Ad Settings** do. You can keep the a
 
 
 The **Only Show Pure Results** option will remove any "widgets" that Google decides to put in the search results such as "People also ask", "Twitter", "Top stories", "the side widget thing", ... 
-![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/show-only-pure-results.png =5x5)
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/show-only-pure-results.png)
 
 
 The **Remove emojis** option will well... remove all the emojis from the search results.
