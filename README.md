@@ -13,7 +13,7 @@ This extension allows you to customize how your Google Search results are displa
 ## Examples:
 
 This is the extension settings menu where you can select how your search results appear. 
-![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/UI.png)
+![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/ui.png)
 
 
 This demonstrates what the controls under **URL Position and Apperance** do. Remove the url(**remove url**), remove arrow after the irl(**remove arrow after url**), color the url green(**color url**), move the url bellow the title(**move url**). 
