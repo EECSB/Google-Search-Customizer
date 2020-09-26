@@ -183,7 +183,9 @@ function modifySearchResults(configuration){
 
         //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
         forEachDoThis(listOfElementLists, function(element){
-            element.innerText = element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+            const cleanedString =element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+            if(element.innerText != cleanedString)
+                element.innerText = cleanedString;
         });
     }
 
