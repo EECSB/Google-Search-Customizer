@@ -11,6 +11,7 @@ window.addEventListener('load', (event) => {
     //Events////////////////////////////////////////////////////////////
 
     //Checkbox events//////////////////////
+    
     document.getElementById("removeUrlCheckBox").addEventListener("change", event =>{
         changeConfig("removeUrl", event.target.checked);
     });
@@ -27,8 +28,32 @@ window.addEventListener('load', (event) => {
         changeConfig("colorUrl", event.target.checked);
     });
 
-    document.getElementById("pureSearchResultsCheckBox").addEventListener("change", event =>{
-        changeConfig("onlyShowPureSerachResults",event.target.checked);
+    document.getElementById("searchWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("searchWidget",event.target.checked);
+    });
+
+    document.getElementById("askWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("askWidget",event.target.checked);
+    });
+
+    document.getElementById("twitterWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("twitterWidget",event.target.checked);
+    });
+
+    document.getElementById("newsWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("newsWidget",event.target.checked);
+    });
+
+    document.getElementById("mapsWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("mapsWidget",event.target.checked);
+    });
+
+    document.getElementById("sideBarWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("sideBarWidget",event.target.checked);
+    });
+
+    document.getElementById("ratingsWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("ratingsWidget",event.target.checked);
     });
 
     document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
@@ -46,7 +71,13 @@ window.addEventListener('load', (event) => {
                 "moveUrl": false,
                 "colorUrl": false,
                 "adsDisplay": "normal", //"remove", "standOut1", "standOut2"
-                "onlyShowPureSerachResults": false,
+                "searchWidget": false,
+                "askWidget": false,
+                "twitterWidget": false,
+                "newsWidget": false,
+                "mapsWidget": false,
+                "sideBarWidget": false,
+                "ratingsWidget": false,
                 "urlColor": "green",
                 "adBackgroundColor": "antiquewhite",
                 "removeEmojis": false
@@ -82,8 +113,15 @@ window.addEventListener('load', (event) => {
         document.getElementById("removeArrowCheckBox").checked = configuration.removeArrow;
         document.getElementById("moveCheckBox").checked = configuration.moveUrl;
         document.getElementById("colorUrlCheckBox").checked = configuration.colorUrl;
-        document.getElementById("pureSearchResultsCheckBox").checked = configuration.onlyShowPureSerachResults;
         document.getElementById("removeEmojisCheckBox").checked = configuration.removeEmojis;
+
+        document.getElementById("searchWidgetCheckBox").checked = configuration.searchWidget;
+        document.getElementById("askWidgetCheckBox").checked = configuration.askWidget;
+        document.getElementById("twitterWidgetCheckBox").checked = configuration.twitterWidget;
+        document.getElementById("newsWidgetCheckBox").checked = configuration.newsWidget;
+        document.getElementById("mapsWidgetCheckBox").checked = configuration.mapsWidget;
+        document.getElementById("sideBarWidgetCheckBox").checked = configuration.sideBarWidget;
+        document.getElementById("ratingsWidgetCheckBox").checked = configuration.ratingsWidget;
 
         var classname = document.getElementsByClassName("adsDisplay");
 

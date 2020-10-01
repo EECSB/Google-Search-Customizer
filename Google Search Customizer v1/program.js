@@ -21,7 +21,13 @@ if(url.includes(".google.") && isSearch()){
         "moveUrl": false,
         "colorUrl": false,
         "adsDisplay" : "normal", //"remove", "standOut1", "standOut2"
-        "onlyShowPureSerachResults" : false,
+        "searchWidget": false,
+        "askWidget": false,
+        "twitterWidget": false,
+        "newsWidget": false,
+        "mapsWidget": false,
+        "sideBarWidget": false,
+        "ratingsWidget": false,
         "UrlColor" : "green",
         "adBackgroundColor" : "antiquewhite",
         "removeEmojis": false
@@ -29,11 +35,10 @@ if(url.includes(".google.") && isSearch()){
 
     //Store defaults if nothing is stored.
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) { 
-        if('configuration' in storedConfiguration){
+        if('configuration' in storedConfiguration)
             configuration = storedConfiguration;
-        }else{
+        else
             chrome.storage.sync.set({'configuration': configuration}, function(){});
-        }
 
         modifySearchResults(configuration["configuration"]);
     });
@@ -145,20 +150,31 @@ function modifySearchResults(configuration){
     }
 
 
-    //Only Show Pure Search Results///////////////////////////////////////////
-    if(configuration.onlyShowPureSerachResults){
-        //Remove all BS except pure results. 
-        removeElements(".e2BEnf", 1);
-        //Remove "People also ask".
-        removeElements(".xpdopen", 2);
-        //Remove maps.
+    //Remove Widgets///////////////////////////////////////////
+    if(configuration.searchWidget)
+        removeElements("#botstuff", 0);
+
+    if(configuration.askWidget)
+        removeElements(".JolIg", 4); //".xpdopen"
+        
+    if(configuration.twitterWidget)
+        removeElements(".otisdd", 2); //".e2BEnf"
+
+    if(configuration.newsWidget)
+        removeElements(".GmE3X", 4); //".e2BEnf"
+
+    if(configuration.mapsWidget)
         removeElements(".AEprdc", 1);
-        //Remove sidebar with information.
+
+    if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
-        //Remove ratings.
+        removeElements(".Lj180d", 6);
+    }
+
+    if(configuration.ratingsWidget){
+        removeElements(".liYKde", 1);
         removeElements(".dhIWPd", 1);
-        //Remove ratings 2.
-        removeElements(".fG8Fp", 0);
+        removeElements(".fG8Fp", 1);
     }
 
 

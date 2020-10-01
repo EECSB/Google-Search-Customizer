@@ -85,3 +85,10 @@ a{
     font-size: 13px;
     margin-top: 1px;
 }
+
+#widgetsMessage{
+    font-size: 13px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
