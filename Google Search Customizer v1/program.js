@@ -123,8 +123,10 @@ function modifySearchResults(configuration){
             }
         }
     }else if(configuration.adsDisplay == "remove"){
-        //Remove whole ad section.
+        //Remove whole ad section(top).
         removeElements("#tads", 0);
+        //Remove whole ad section(bottom).
+        removeElements("#tadsb", 0);
         //Remove whole ad section.
         removeElements(".ads-ad", 0);
     }
@@ -350,6 +352,7 @@ function removeElements(name, parentNum){
         }
     }else if(name[0] == '#'){
         name = name.replace('#', '');
+
         const element = document.getElementById(name);
 
         if(element != null)
