@@ -59,7 +59,7 @@ function receivedMessage(message, sender, response){
 /////////////////////////////////////////////////////////////////////////
 
 
-//Main Function//////////////////////////////////////////////////////////////
+//Main Function//////////////////////////////////////////////////////////
 
 function modifySearchResults(configuration){
     //Remove Url////////////////////////////////////////////////////////
@@ -80,6 +80,9 @@ function modifySearchResults(configuration){
         removeElements(".B6fmyf", 0);
         //Remove arrow from ad.
         removeElements(".e1ycic", 0);
+        //Remove 3 dots if present instaed of arrow.
+        removeElements(".D6lY4c", 0);
+        removeElements(".rIbAWc", 0);
     }
 
 
