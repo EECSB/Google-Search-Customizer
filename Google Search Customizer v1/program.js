@@ -159,14 +159,19 @@ function modifySearchResults(configuration){
     if(configuration.searchWidget)
         removeElements("#botstuff", 0);
 
-    if(configuration.askWidget)
-        removeElements(".JolIg", 4); //".xpdopen"
+    if(configuration.askWidget){
+        removeElements(".JolIg", 4);
+        removeElements(".Wt5Tfe", 2);
+    }
         
     if(configuration.twitterWidget)
-        removeElements(".otisdd", 2); //".e2BEnf"
+        removeElements(".otisdd", 2);
 
-    if(configuration.newsWidget)
-        removeElements(".GmE3X", 4); //".e2BEnf"
+    if(configuration.newsWidget){
+        removeElements(".GmE3X", 4);
+        removeElements(".yG4QQe", 1);
+    }
+        
 
     if(configuration.mapsWidget)
         removeElements(".AEprdc", 1);
