@@ -1,9 +1,9 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
+    width: 400px;
 }
 
 #optionsWrapper{
-    width: 250px;
     font-size: 15px;
 }
 
@@ -31,6 +31,7 @@ a{
 
 #message{
     color: red;
+    font-size: 13px;
 }
 
 .tooltip {
@@ -91,4 +92,8 @@ a{
     margin-left: 10px;
     margin-bottom: 5px;
     margin-top: 5px;
+}
+
+.colorSelection{
+    width: 80px;
 }

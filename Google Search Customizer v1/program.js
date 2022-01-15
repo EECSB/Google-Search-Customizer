@@ -1,6 +1,6 @@
 //Check if this is actually the Google search engine and not some other google site.
 function isSearch(){
-    const classname = document.getElementsByClassName("RNNXgb"); //class present on on of the divs of the Google search bar.
+    const classname = document.getElementsByClassName("RNNXgb"); //Class present on one of the divs of the Google search bar.
 
     if(classname != undefined && classname != null)
         return true;
@@ -30,7 +30,10 @@ if(url.includes(".google.") && isSearch()){
         "ratingsWidget": false,
         "UrlColor" : "green",
         "adBackgroundColor" : "antiquewhite",
-        "removeEmojis": false
+        "removeEmojis": false,
+        "youtubeWidtget": false,
+        "images": false,
+        "mapsFindResultsOnWidget": false
     };
 
     //Store defaults if nothing is stored.
@@ -171,10 +174,19 @@ function modifySearchResults(configuration){
         removeElements(".GmE3X", 4);
         removeElements(".yG4QQe", 1);
     }
-        
 
-    if(configuration.mapsWidget)
+    if(configuration.mapsWidget){
         removeElements(".AEprdc", 1);
+        removeElements(".kqmHwe", 1);
+    }
+
+    if(configuration.mapsFindResultsOnWidget){
+        removeElements("#i4BWVe", 1);
+    }
+
+    if(configuration.youtubeWidtget){
+        removeElements(".uVMCKf", 1);
+    }
 
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
@@ -185,8 +197,19 @@ function modifySearchResults(configuration){
         removeElements(".liYKde", 1);
         removeElements(".dhIWPd", 1);
         removeElements(".fG8Fp", 1);
+        removeElements(".smukrd", 1);
     }
 
+    //Images next to/in some search results
+    if(configuration.images){
+        ApplyToClass("SD80kd", function(element){
+            element.style.display = "none";
+        });
+
+        ApplyToClass("FxLDp", function(element){
+            element.style.padding = "0";
+        });
+    }
 
     //Color Url////////////////////////////////////////////////////////////////
     if(configuration.colorUrl){

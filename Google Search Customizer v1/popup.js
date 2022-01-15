@@ -59,6 +59,27 @@ window.addEventListener('load', (event) => {
     document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
         changeConfig("removeEmojis", event.target.checked);
     });
+
+    document.getElementById("youtubeWidtgetCheckBox").addEventListener("change", event =>{
+        changeConfig("youtubeWidtget", event.target.checked);
+    });
+
+    document.getElementById("imagesCheckBox").addEventListener("change", event =>{
+        changeConfig("images", event.target.checked);
+    });
+
+    document.getElementById("mapsFindResultsOnWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("mapsFindResultsOnWidget", event.target.checked);
+    });
+
+    //Color Selection /////
+    document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
+        changeConfig("adBackgroundColor", event.target.value);
+    });
+
+    document.getElementById("urlColorSelection").addEventListener("change", event =>{
+        changeConfig("urlColor", event.target.value);
+    });
     
     //Button///////////////
     document.getElementById("defaultSettings").addEventListener("click", restoreDefaultConfig);
@@ -80,7 +101,10 @@ window.addEventListener('load', (event) => {
                 "ratingsWidget": false,
                 "urlColor": "green",
                 "adBackgroundColor": "antiquewhite",
-                "removeEmojis": false
+                "removeEmojis": false,
+                "youtubeWidtget": false,
+                "images": false,
+                "mapsFindResultsOnWidget": false
             }
         }
 
@@ -122,6 +146,15 @@ window.addEventListener('load', (event) => {
         document.getElementById("mapsWidgetCheckBox").checked = configuration.mapsWidget;
         document.getElementById("sideBarWidgetCheckBox").checked = configuration.sideBarWidget;
         document.getElementById("ratingsWidgetCheckBox").checked = configuration.ratingsWidget;
+        document.getElementById("mapsWidgetCheckBox").checked = configuration.mapsWidget;
+        document.getElementById("sideBarWidgetCheckBox").checked = configuration.sideBarWidget;
+        document.getElementById("ratingsWidgetCheckBox").checked = configuration.ratingsWidget;
+        document.getElementById("youtubeWidtgetCheckBox").checked = configuration.youtubeWidtget;
+        document.getElementById("imagesCheckBox").checked = configuration.images;
+        document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
+
+        document.getElementById("adBackgroundColorSelection").value  = configuration.adBackgroundColor;
+        document.getElementById("urlColorSelection").value  = configuration.urlColor;
 
         var classname = document.getElementsByClassName("adsDisplay");
 
@@ -130,9 +163,6 @@ window.addEventListener('load', (event) => {
                 classname[i].checked = true;
             }
         }
-
-        //= configuration.urlColor;
-        //= configuration.adBackgroundColor;
     }
 
     function changeConfig(key, value){

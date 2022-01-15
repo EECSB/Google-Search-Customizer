@@ -2,12 +2,14 @@
 
 <html>
     <head>
-        <title>Hello World</title>
         <script src="popup.js"></script>
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
         <h3 id="greet">Google Search Customizer Settings</h3>
+
+        <p id="message">Please refresh the page for the changes to take full effect!</p>
+
         <div id="optionsWrapper">
             <h5 id="adTitle">URL Position and Apperance</h5>
             <div class="controlsWrapper">
@@ -15,6 +17,7 @@
                 <input type="checkbox" id="removeArrowCheckBox" class="checkbox" name="removeArrow" value="arrow"> Remove Arrow/Dots after URL<br>
                 <input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move"> Move URL<br>
                 <input type="checkbox" id="colorUrlCheckBox" class="checkbox" name="colorUrl" value="color"> Color URL<br>
+                Url Color: <input type="textbox" id="urlColorSelection" class="colorSelection"> (<a class="link" target="_blank" href="https://www.google.com/search?q=hex+color+picker">pick and paste your HEX color code</a>)<br>
             </div>
 
             <h5 id="adTitle">Ad Settings</h5>
@@ -23,6 +26,7 @@
                 <input type="radio" class="adsDisplay" name="adVisibility" value="normal"> Normal<br>
                 <input type="radio" class="adsDisplay" name="adVisibility" value="standOut1"> Stand Out<br>
                 <input type="radio" class="adsDisplay" name="adVisibility" value="standOut2"> Really Stand Out<br>
+                Ad Color: <input type="textbox" id="adBackgroundColorSelection" class="colorSelection"> (<a class="link" target="_blank" href="https://www.google.com/search?q=hex+color+picker">pick and paste your HEX color code</a>)<br>
             </div>
 
             <h5 id="adTitle">Widget Settings</h5>
@@ -35,18 +39,22 @@
                 <input type="checkbox" id="mapsWidgetCheckBox" class="checkbox"> Google Maps Widget<br>
                 <input type="checkbox" id="sideBarWidgetCheckBox" class="checkbox"> Side bar info. Widget<br>
                 <input type="checkbox" id="ratingsWidgetCheckBox" class="checkbox"> Ratings<br>
+                <input type="checkbox" id="youtubeWidtgetCheckBox" class="checkbox"> Youtube Videos Widget<br>
+                <input type="checkbox" id="mapsFindResultsOnWidgetCheckBox" class="checkbox"> "Find Results On" Widget<br>
             </div>
 
             <h5 id="adTitle">Additional Settings</h5>
             <div class="controlsWrapper">
                 <input type="checkbox" id="removeEmojisCheckBox" class="checkbox" name="removeEmojis" value="emoji"> Remove Emojis<br>
+                <input type="checkbox" id="imagesCheckBox" class="checkbox"> Remove images within search results<br>
             </div>
 
             <button id="defaultSettings">Restore Defaults</button>
             <br>
-            <p id="message">Please refresh the page for the changes to take full effect!</p>
+            <br>
             
-            <a class="link" target="_blank" href="https://github.com/EECSB/Google-Search-Customizer/issues/">Report a bug</a>
+            <a class="link" target="_blank" href="https://github.com/EECSB/Google-Search-Customizer/issues/">Report a bug</a> 
+            <br>
             <a class="link" target="_blank" href="https://github.com/EECSB/Google-Search-Customizer/">Open Source GitHub Code Repository</a>
             <br>
             <span>Developed by: &nbsp; <a target="_blank" href="https://eecs.blog/">  The EECS Blog</a></span>
