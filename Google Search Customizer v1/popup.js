@@ -72,6 +72,10 @@ window.addEventListener('load', (event) => {
         changeConfig("mapsFindResultsOnWidget", event.target.checked);
     });
 
+    document.getElementById("thingsToDoWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("thingsToDoWidget", event.target.checked);
+    });
+
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
         changeConfig("adBackgroundColor", event.target.value);
@@ -104,7 +108,8 @@ window.addEventListener('load', (event) => {
                 "removeEmojis": false,
                 "youtubeWidtget": false,
                 "images": false,
-                "mapsFindResultsOnWidget": false
+                "mapsFindResultsOnWidget": false,
+                "thingsToDoWidget": false
             }
         }
 
@@ -152,6 +157,8 @@ window.addEventListener('load', (event) => {
         document.getElementById("youtubeWidtgetCheckBox").checked = configuration.youtubeWidtget;
         document.getElementById("imagesCheckBox").checked = configuration.images;
         document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
+        document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
+        
 
         document.getElementById("adBackgroundColorSelection").value  = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value  = configuration.urlColor;

@@ -8,7 +8,7 @@ function isSearch(){
         return false;
 }
 
-//Get URL od current page.
+//Get URL of current page.
 const url = window.location.href;
 
 //Only run on Google domain.
@@ -28,12 +28,13 @@ if(url.includes(".google.") && isSearch()){
         "mapsWidget": false,
         "sideBarWidget": false,
         "ratingsWidget": false,
-        "UrlColor" : "green",
+        "urlColor" : "green",
         "adBackgroundColor" : "antiquewhite",
         "removeEmojis": false,
         "youtubeWidtget": false,
         "images": false,
-        "mapsFindResultsOnWidget": false
+        "mapsFindResultsOnWidget": false,
+        "thingsToDoWidget": false
     };
 
     //Store defaults if nothing is stored.
@@ -83,7 +84,7 @@ function modifySearchResults(configuration){
         removeElements(".B6fmyf", 0);
         //Remove arrow from ad.
         removeElements(".e1ycic", 0);
-        //Remove 3 dots if present instaed of arrow.
+        //Remove 3 dots if present instead of arrow.
         removeElements(".D6lY4c", 0);
         removeElements(".rIbAWc", 0);
     }
@@ -171,8 +172,7 @@ function modifySearchResults(configuration){
         removeElements(".otisdd", 2);
 
     if(configuration.newsWidget){
-        removeElements(".GmE3X", 4);
-        removeElements(".yG4QQe", 1);
+        removeElements(".AHFbof", 4); //
     }
 
     if(configuration.mapsWidget){
@@ -199,6 +199,11 @@ function modifySearchResults(configuration){
         removeElements(".fG8Fp", 1);
         removeElements(".smukrd", 1);
     }
+
+    if(configuration.thingsToDoWidget){
+        removeElements(".IYoemc", 1);
+    }
+
 
     //Images next to/in some search results
     if(configuration.images){
