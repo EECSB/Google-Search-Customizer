@@ -76,6 +76,11 @@ window.addEventListener('load', (event) => {
         changeConfig("thingsToDoWidget", event.target.checked);
     });
 
+    document.getElementById("imagesWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("imagesWidget", event.target.checked);
+    });
+
+
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
         changeConfig("adBackgroundColor", event.target.value);
@@ -109,7 +114,8 @@ window.addEventListener('load', (event) => {
                 "youtubeWidtget": false,
                 "images": false,
                 "mapsFindResultsOnWidget": false,
-                "thingsToDoWidget": false
+                "thingsToDoWidget": false,
+                "imagesWidget": false
             }
         }
 
@@ -158,7 +164,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("imagesCheckBox").checked = configuration.images;
         document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
         document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
-        
+        document.getElementById("imagesWidgetCheckBox").checked = configuration.imagesWidget;
 
         document.getElementById("adBackgroundColorSelection").value  = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value  = configuration.urlColor;

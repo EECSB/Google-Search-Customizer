@@ -34,7 +34,8 @@ if(url.includes(".google.") && isSearch()){
         "youtubeWidtget": false,
         "images": false,
         "mapsFindResultsOnWidget": false,
-        "thingsToDoWidget": false
+        "thingsToDoWidget": false,
+        "imagesWidget": false
     };
 
     //Store defaults if nothing is stored.
@@ -201,7 +202,11 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.thingsToDoWidget){
-        removeElements(".IYoemc", 1);
+        removeElements(".IYoemc", 3);
+    }
+
+    if(configuration.imagesWidget){
+        removeElements("#iur", 4);
     }
 
 
