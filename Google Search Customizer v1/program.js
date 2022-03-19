@@ -94,7 +94,7 @@ function modifySearchResults(configuration){
     //Modify Ads///////////////////////////////////////////////////////////////////////
     if(configuration.adsDisplay == "standOut1" || configuration.adsDisplay == "standOut2"){
         //Make ad more obvious.
-        let element = document.getElementsByClassName("VqFMTc");
+        let element = document.getElementsByClassName("CnP9N");
 
         for (let i = 0; i < element.length; i++){
             element[i].style.color = "green";
@@ -112,23 +112,27 @@ function modifySearchResults(configuration){
             let tawElement = document.getElementById("tvcap");
             let adsbottom = document.getElementById("bottomads");
 
-            //background-color: antiquewhite;
-
             //Color top ads if present.
             if(tawElement != undefined)
                 tawElement.style.backgroundColor = configuration.adBackgroundColor;
 
             //Color bottom ads if present.
-            if(tawElement != undefined)
+            if(tawElement != undefined){
                 adsbottom.style.backgroundColor = configuration.adBackgroundColor;
+                adsbottom.style.padding = "10px";
+            }
             
             if(tawElement != undefined){
-                ApplyToClass("waTp2e", function(element){
+                ApplyToClass("tvcap", function(element){
                     //Color ads.
                     element.style.backgroundColor = configuration.adBackgroundColor;
-                    element.style.padding = "10px 10px 10px 10px";
+                    element.style.padding = "10px";
                 });
             }
+
+            ApplyToClass("tads", function(element){
+                element.style.padding = "10px";
+            });
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section(top).
@@ -161,37 +165,57 @@ function modifySearchResults(configuration){
 
 
     //Remove Widgets///////////////////////////////////////////
-    if(configuration.searchWidget)
+    let removeAnyWidget = false;
+
+    if(configuration.searchWidget){
         removeElements("#botstuff", 0);
+
+        removeAnyWidget = true;
+    }
 
     if(configuration.askWidget){
         removeElements(".JolIg", 4);
         removeElements(".Wt5Tfe", 2);
+
+        removeAnyWidget = true;
     }
         
-    if(configuration.twitterWidget)
+    if(configuration.twitterWidget){
         removeElements(".otisdd", 2);
-
+        
+        removeAnyWidget = true;
+    }
+        
     if(configuration.newsWidget){
-        removeElements(".AHFbof", 4); //
+        removeElements(".AHFbof", 4);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.mapsWidget){
         removeElements(".AEprdc", 1);
         removeElements(".kqmHwe", 1);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.mapsFindResultsOnWidget){
         removeElements("#i4BWVe", 1);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.youtubeWidtget){
         removeElements(".uVMCKf", 1);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.ratingsWidget){
@@ -203,10 +227,21 @@ function modifySearchResults(configuration){
 
     if(configuration.thingsToDoWidget){
         removeElements(".IYoemc", 3);
+
+        removeAnyWidget = true;
     }
 
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
+
+        removeAnyWidget = true;
+    }
+
+    if(removeAnyWidget){
+        //Remove bottom margin.
+        ApplyToClass("hlcw0c", function(element){
+            element.style.margin = "0px";
+        });
     }
 
 
@@ -215,10 +250,14 @@ function modifySearchResults(configuration){
         ApplyToClass("SD80kd", function(element){
             element.style.display = "none";
         });
+        
+        removeElements(".fWhgmd", 4);
 
         ApplyToClass("FxLDp", function(element){
             element.style.padding = "0";
         });
+
+        
     }
 
     //Color Url////////////////////////////////////////////////////////////////
@@ -273,7 +312,7 @@ function setUrlColor(urlColor){
 
 function setUrlColorAds(urlColor){
     if(urlColor != ""){
-        let urls = document.getElementsByClassName("gBIQub"); 
+        let urls = document.getElementsByClassName("x2VHCd"); 
 
         for(let i = 0; urls.length > i; i++)
             urls[i].style.color = urlColor;
