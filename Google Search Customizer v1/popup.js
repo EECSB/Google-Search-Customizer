@@ -61,7 +61,7 @@ window.addEventListener('load', (event) => {
     });
 
     document.getElementById("youtubeWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("youtubeWidget", event.target.checked);
+        changeConfig("youtubeWidtget", event.target.checked);
     });
 
     document.getElementById("imagesCheckBox").addEventListener("change", event =>{
