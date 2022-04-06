@@ -304,20 +304,23 @@ function removePaddingBeforeWidget(name, parentNum){
         for (let i = 0; i < elements.length; i++){
             node = getParentNode(elements[i], parentNum);
         }
-
-        let prevNode = node.previousElementSibling;
-        if(prevNode != null)
-            prevNode.style.margin = "0px";
-
+        
+        if(node != undefined){
+            let prevNode = node.previousElementSibling;
+            if(prevNode != undefined)
+                prevNode.style.margin = "0px";
+        }
     }else if(name[0] == '#'){
         name = name.replace('#', '');
 
         const element = document.getElementById(name);
-        if(element != null){
+        if(element != undefined){
             let node = getParentNode(element, parentNum);
-            let prevNode = node.previousElementSibling;
-            if(prevNode != null){
-                prevNode.style.margin = "0px";
+            if(node != undefined){
+                let prevNode = node.previousElementSibling;
+                if(prevNode != undefined){
+                    prevNode.style.margin = "0px";
+                }
             }
         }     
     }else{
