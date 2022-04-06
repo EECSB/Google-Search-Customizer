@@ -119,8 +119,10 @@ function modifySearchResults(configuration){
 
             //Color bottom ads if present.
             if(tawElement != undefined){
-                adsbottom.style.backgroundColor = configuration.adBackgroundColor;
-                adsbottom.style.padding = "10px";
+                if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
+                    adsbottom.style.backgroundColor = configuration.adBackgroundColor;
+                    adsbottom.style.padding = "10px";
+                }
             }
             
             if(tawElement != undefined){
