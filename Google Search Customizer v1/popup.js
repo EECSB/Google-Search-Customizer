@@ -80,6 +80,10 @@ window.addEventListener('load', (event) => {
         changeConfig("imagesWidget", event.target.checked);
     });
 
+    document.getElementById("featuredSnippetCheckBox").addEventListener("change", event =>{
+        changeConfig("featuredSnippet", event.target.checked);
+    });
+
 
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
@@ -115,7 +119,8 @@ window.addEventListener('load', (event) => {
                 "images": false,
                 "mapsFindResultsOnWidget": false,
                 "thingsToDoWidget": false,
-                "imagesWidget": false
+                "imagesWidget": false,
+                "featuredSnippet": false
             }
         }
 
@@ -165,6 +170,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
         document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
         document.getElementById("imagesWidgetCheckBox").checked = configuration.imagesWidget;
+        document.getElementById("featuredSnippetCheckBox").checked = configuration.featuredSnippet;
 
         document.getElementById("adBackgroundColorSelection").value  = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value  = configuration.urlColor;

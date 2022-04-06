@@ -35,7 +35,8 @@ if(url.includes(".google.") && isSearch()){
         "images": false,
         "mapsFindResultsOnWidget": false,
         "thingsToDoWidget": false,
-        "imagesWidget": false
+        "imagesWidget": false,
+        "featuredSnippet": false
     };
 
     //Store defaults if nothing is stored.
@@ -238,6 +239,10 @@ function modifySearchResults(configuration){
         removeElements("#iur", 4);
 
         removePaddingBeforeWidget("#iur", 4);
+    }
+
+    if(configuration.featuredSnippet){
+        removeElements(".M8OgIe", 0);
     }
     
 
