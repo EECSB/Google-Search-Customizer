@@ -165,57 +165,60 @@ function modifySearchResults(configuration){
 
 
     //Remove Widgets///////////////////////////////////////////
-    let removeAnyWidget = false;
+
+    if(configuration.adsDisplay == "remove"){
+        removeElements(".IhvZRb", 2); //Ads in side bar widget
+        removeElements(".T98FId", 2); //Ads in search results(as widget or "Popular products widget")
+
+        removePaddingBeforeWidget(".T98FId", 2);
+    }
+    
 
     if(configuration.searchWidget){
         removeElements("#botstuff", 0);
-
-        removeAnyWidget = true;
     }
 
     if(configuration.askWidget){
         removeElements(".JolIg", 4);
         removeElements(".Wt5Tfe", 2);
 
-        removeAnyWidget = true;
+        removePaddingBeforeWidget(".Wt5Tfe", 2);
     }
         
     if(configuration.twitterWidget){
         removeElements(".otisdd", 2);
         
-        removeAnyWidget = true;
+        removePaddingBeforeWidget(".otisdd", 6);
     }
         
     if(configuration.newsWidget){
         removeElements(".AHFbof", 4);
-
-        removeAnyWidget = true;
+        
+        removePaddingBeforeWidget(".AHFbof", 4);
     }
 
     if(configuration.mapsWidget){
-        removeElements(".AEprdc", 1);
+        removeElements(".AEprdc", 1); //Not sure if this class is still relevant.
         removeElements(".kqmHwe", 1);
 
-        removeAnyWidget = true;
+        removePaddingBeforeWidget(".kqmHwe", 4);
     }
 
     if(configuration.mapsFindResultsOnWidget){
         removeElements("#i4BWVe", 1);
 
-        removeAnyWidget = true;
+        //removePaddingBeforeWidget("#i4BWVe", 1);
     }
 
-    if(configuration.youtubeWidtget){
+    if(configuration.youtubeWidtget){ 
         removeElements(".uVMCKf", 1);
 
-        removeAnyWidget = true;
+        removePaddingBeforeWidget(".uVMCKf", 1);
     }
 
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
-
-        removeAnyWidget = true;
     }
 
     if(configuration.ratingsWidget){
@@ -228,22 +231,15 @@ function modifySearchResults(configuration){
     if(configuration.thingsToDoWidget){
         removeElements(".IYoemc", 3);
 
-        removeAnyWidget = true;
+        removePaddingBeforeWidget(".IYoemc", 3);
     }
 
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
 
-        removeAnyWidget = true;
+        removePaddingBeforeWidget("#iur", 4);
     }
-
-    if(removeAnyWidget){
-        //Remove bottom margin.
-        ApplyToClass("hlcw0c", function(element){
-            element.style.margin = "0px";
-        });
-    }
-
+    
 
     //Images next to/in some search results
     if(configuration.images){
@@ -256,8 +252,6 @@ function modifySearchResults(configuration){
         ApplyToClass("FxLDp", function(element){
             element.style.padding = "0";
         });
-
-        
     }
 
     //Color Url////////////////////////////////////////////////////////////////
@@ -295,6 +289,36 @@ function modifySearchResults(configuration){
 
 
 //Search results modification functions/////////////////////////////////////////
+
+function removePaddingBeforeWidget(name, parentNum){
+    if(name[0] == '.'){
+        name = name.replace('.', '');
+        const elements = document.getElementsByClassName(name);
+        
+        let node;
+        for (let i = 0; i < elements.length; i++){
+            node = getParentNode(elements[i], parentNum);
+        }
+
+        let prevNode = node.previousElementSibling;
+        if(prevNode != null)
+            prevNode.style.margin = "0px";
+
+    }else if(name[0] == '#'){
+        name = name.replace('#', '');
+
+        const element = document.getElementById(name);
+        if(element != null){
+            let node = getParentNode(element, parentNum);
+            let prevNode = node.previousElementSibling;
+            if(prevNode != null){
+                prevNode.style.margin = "0px";
+            }
+        }     
+    }else{
+        throw "Undefined element!";
+    }
+}
 
 function setUrlColor(urlColor){
     if(urlColor != ""){

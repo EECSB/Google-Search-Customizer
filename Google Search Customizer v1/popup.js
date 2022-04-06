@@ -60,8 +60,8 @@ window.addEventListener('load', (event) => {
         changeConfig("removeEmojis", event.target.checked);
     });
 
-    document.getElementById("youtubeWidtgetCheckBox").addEventListener("change", event =>{
-        changeConfig("youtubeWidtget", event.target.checked);
+    document.getElementById("youtubeWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("youtubeWidget", event.target.checked);
     });
 
     document.getElementById("imagesCheckBox").addEventListener("change", event =>{
@@ -160,7 +160,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("mapsWidgetCheckBox").checked = configuration.mapsWidget;
         document.getElementById("sideBarWidgetCheckBox").checked = configuration.sideBarWidget;
         document.getElementById("ratingsWidgetCheckBox").checked = configuration.ratingsWidget;
-        document.getElementById("youtubeWidtgetCheckBox").checked = configuration.youtubeWidtget;
+        document.getElementById("youtubeWidgetCheckBox").checked = configuration.youtubeWidtget;
         document.getElementById("imagesCheckBox").checked = configuration.images;
         document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
         document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
