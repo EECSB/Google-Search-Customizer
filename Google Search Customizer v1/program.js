@@ -311,6 +311,8 @@ function removePaddingBeforeWidget(name, parentNum){
             let prevNode = node.previousElementSibling;
             if(prevNode != undefined)
                 prevNode.style.margin = "0px";
+            else
+                node.style.margin = "0px";
         }
     }else if(name[0] == '#'){
         name = name.replace('#', '');
@@ -320,9 +322,10 @@ function removePaddingBeforeWidget(name, parentNum){
             let node = getParentNode(element, parentNum);
             if(node != undefined){
                 let prevNode = node.previousElementSibling;
-                if(prevNode != undefined){
+                if(prevNode != undefined)
                     prevNode.style.margin = "0px";
-                }
+                else
+                    node.style.margin = "0px";
             }
         }     
     }else{
