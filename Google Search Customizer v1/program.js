@@ -39,15 +39,22 @@ if(url.includes(".google.") && isSearch()){
         "featuredSnippet": false
     };
 
-    //Store defaults if nothing is stored.
-    chrome.storage.sync.get(['configuration'], function(storedConfiguration) { 
-        if('configuration' in storedConfiguration)
-            configuration = storedConfiguration;
-        else
-            chrome.storage.sync.set({'configuration': configuration}, function(){});
-
-        modifySearchResults(configuration["configuration"]);
+    chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+        if ('configuration' in storedConfiguration) { // if there is a stored configuration already
+            sendToMain(storedConfiguration);
+        }
+        else { // if there is no stored configuration yet = extension hasn't been used yet
+            chrome.storage.sync.set({'configuration': configuration}, function(){}); // store the default configuration
+            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+            sendToMain(storedConfiguration);
+            });
+        }
     });
+    // send saved configuration to main
+    function sendToMain(storedConfiguration) {
+        configuration = storedConfiguration;
+        modifySearchResults(configuration["configuration"]);
+    }
 }
 
 
