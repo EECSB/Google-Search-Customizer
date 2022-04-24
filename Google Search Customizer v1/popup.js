@@ -34,7 +34,7 @@ window.addEventListener('load', (event) => {
             });
         }
     });
-    // set configuration object to the saved one
+    // set configuration object to the saved one and set UI
     function storeConfig(storedConfiguration) {
         configuration = storedConfiguration;
         setUI(configuration["configuration"]);

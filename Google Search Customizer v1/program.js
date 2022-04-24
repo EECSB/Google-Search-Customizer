@@ -46,11 +46,11 @@ if(url.includes(".google.") && isSearch()){
         else { // if there is no stored configuration yet = extension hasn't been used yet
             chrome.storage.sync.set({'configuration': configuration}, function(){}); // store the default configuration
             chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-            sendToMain(storedConfiguration);
+                sendToMain(storedConfiguration);
             });
         }
     });
-    // send saved configuration to main
+    // set configuration object to the saved one and set run main function
     function sendToMain(storedConfiguration) {
         configuration = storedConfiguration;
         modifySearchResults(configuration["configuration"]);
