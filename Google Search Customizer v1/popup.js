@@ -1,10 +1,44 @@
-
-
 window.addEventListener('load', (event) => {
+    let configuration = {
+        "removeUrl" : false,
+        "removeArrow" : false,
+        "moveUrl": false,
+        "colorUrl": false,
+        "adsDisplay" : "normal", //"remove", "standOut1", "standOut2"
+        "searchWidget": false,
+        "askWidget": false,
+        "twitterWidget": false,
+        "newsWidget": false,
+        "mapsWidget": false,
+        "sideBarWidget": false,
+        "ratingsWidget": false,
+        "urlColor" : "green",
+        "adBackgroundColor" : "antiquewhite",
+        "removeEmojis": false,
+        "youtubeWidtget": false,
+        "images": false,
+        "mapsFindResultsOnWidget": false,
+        "thingsToDoWidget": false,
+        "imagesWidget": false,
+        "featuredSnippet": false
+    };
     //Initialization////////////////////////////////////////////////////
-    chrome.storage.sync.get(['configuration'], function(configuration) { 
-        setUI(configuration["configuration"]);
+    chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+        if ('configuration' in storedConfiguration) { // if there is a stored configuration already
+            storeConfig(storedConfiguration);
+        }
+        else { // if there is no stored configuration yet = extension hasn't been used yet
+            chrome.storage.sync.set({'configuration': configuration}, function(){});
+            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+                storeConfig(storedConfiguration);
+            });
+        }
     });
+    // set configuration object to the saved one and set UI
+    function storeConfig(storedConfiguration) {
+        configuration = storedConfiguration;
+        setUI(configuration["configuration"]);
+    }
 
     ////////////////////////////////////////////////////////////////////
 
