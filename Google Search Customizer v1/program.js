@@ -36,7 +36,11 @@ if(url.includes(".google.") && isSearch()){
         "mapsFindResultsOnWidget": false,
         "thingsToDoWidget": false,
         "imagesWidget": false,
-        "featuredSnippet": false
+        "featuredSnippet": false,
+        "dictionaryWidget": false,
+        "businessesWidget": false,
+        "topSightsWidget": false,
+        "imageWithinResult": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -185,12 +189,16 @@ function modifySearchResults(configuration){
     
 
     if(configuration.searchWidget){
-        removeElements("#botstuff", 0);
+        removeElements("#bres", 0);
+        removeElements(".O3JH7", 2);
+        
     }
 
     if(configuration.askWidget){
-        removeElements(".JolIg", 4);
-        removeElements(".Wt5Tfe", 2);
+        removeElements(".JolIg", 4); //Not sure if still needed?
+        removeElements(".Wt5Tfe", 1);
+
+        removeElements(".Okagcf", 1); //For widgets inline/embedded into the search result.
 
         removePaddingBeforeWidget(".Wt5Tfe", 2);
     }
@@ -202,9 +210,11 @@ function modifySearchResults(configuration){
     }
         
     if(configuration.newsWidget){
-        removeElements(".AHFbof", 4);
-        
-        removePaddingBeforeWidget(".AHFbof", 4);
+        removeElements(".AHFbof", 4); //Class not always present in news widget.
+        removeElements(".aUSklf", 3);
+
+        removePaddingBeforeWidget(".AHFbof", 4); //Class not always present in news widget.
+        removePaddingBeforeWidget(".aUSklf", 3);
     }
 
     if(configuration.mapsWidget){
@@ -217,18 +227,20 @@ function modifySearchResults(configuration){
     if(configuration.mapsFindResultsOnWidget){
         removeElements("#i4BWVe", 1);
 
-        //removePaddingBeforeWidget("#i4BWVe", 1);
+        removePaddingBeforeWidget("#i4BWVe", 1);
     }
 
     if(configuration.youtubeWidtget){ 
         removeElements(".uVMCKf", 1);
 
-        removePaddingBeforeWidget(".uVMCKf", 1);
+        removePaddingBeforeWidget(".uVMCKf", 2);
     }
 
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
+        removeElements(".TQc1id", 0);
+         
     }
 
     if(configuration.ratingsWidget){
@@ -247,11 +259,34 @@ function modifySearchResults(configuration){
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
 
-        removePaddingBeforeWidget("#iur", 4);
+        removePaddingBeforeWidget("#iur", 4); 
     }
 
     if(configuration.featuredSnippet){
         removeElements(".M8OgIe", 0);
+        removeElements(".yKMVIe", 10);
+    }
+    
+    if(configuration.dictionaryWidget){
+        removeElements(".bH1Fqd", 13);
+
+        removePaddingBeforeWidget("#iur", 4);
+    }
+
+    if(configuration.businessesWidget){
+        removeElements(".ixfGmd", 3);
+
+        removePaddingBeforeWidget(".ixfGmd", 3);
+    }
+
+    if(configuration.topSightsWidget){
+        removeElements(".UXerFf", 6);
+
+        removePaddingBeforeWidget(".UXerFf", 6);
+    }
+
+    if(configuration.imageWithinResult){
+        removeElements(".W27f5e", 1);
     }
     
 
@@ -312,14 +347,14 @@ function removePaddingBeforeWidget(name, parentNum){
         let node;
         for (let i = 0; i < elements.length; i++){
             node = getParentNode(elements[i], parentNum);
-        }
-        
-        if(node != undefined){
-            let prevNode = node.previousElementSibling;
-            if(prevNode != undefined)
-                prevNode.style.margin = "0px";
-            else
-                node.style.margin = "0px";
+
+            if(node != undefined){
+                let prevNode = node.previousElementSibling;
+                if(prevNode != undefined)
+                    prevNode.style.margin = "0px";
+                else
+                    node.style.margin = "0px";
+            }
         }
     }else if(name[0] == '#'){
         name = name.replace('#', '');
@@ -464,6 +499,20 @@ function decreaseResultDistance(className){
 
 
 //Utils/////////////////////////////////////////////////////////////////////////
+
+function removeElements(name, parentNum, text){
+    const elements = document.getElementsByClassName(name);
+    for (let i = 0; i < elements.length; i++){
+        let node;
+        if(parentNum == -1)
+            node = elements[i];
+        else
+            node = getParentNode(elements[i], parentNum);
+
+        if(nonde.text.toLowerCase() == text.toLowerCase())
+            node.style.display = 'none';
+    }
+}
 
 function removeElements(name, parentNum){
     if(name[0] == '.'){

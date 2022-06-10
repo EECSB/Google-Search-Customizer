@@ -20,7 +20,11 @@ window.addEventListener('load', (event) => {
         "mapsFindResultsOnWidget": false,
         "thingsToDoWidget": false,
         "imagesWidget": false,
-        "featuredSnippet": false
+        "featuredSnippet": false,
+        "dictionaryWidget": false,
+        "businessesWidget": false,
+        "topSightsWidget": false,
+        "imageWithinResult": false
     };
     //Initialization////////////////////////////////////////////////////
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -118,6 +122,22 @@ window.addEventListener('load', (event) => {
         changeConfig("featuredSnippet", event.target.checked);
     });
 
+    document.getElementById("dictionaryWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("dictionaryWidget", event.target.checked);
+    });
+
+    document.getElementById("businessesWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("businessesWidget", event.target.checked);
+    });
+
+    document.getElementById("topSightsWidgetCheckBox").addEventListener("change", event =>{
+        changeConfig("topSightsWidget", event.target.checked);
+    });
+
+    document.getElementById("imageWithinResultCheckBox").addEventListener("change", event =>{
+        changeConfig("imageWithinResult", event.target.checked);
+    });
+
 
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
@@ -154,7 +174,11 @@ window.addEventListener('load', (event) => {
                 "mapsFindResultsOnWidget": false,
                 "thingsToDoWidget": false,
                 "imagesWidget": false,
-                "featuredSnippet": false
+                "featuredSnippet": false,
+                "dictionaryWidget": false,
+                "businessesWidget": false,
+                "topSightsWidget": false,
+                "imageWithinResult": false
             }
         }
 
@@ -205,9 +229,13 @@ window.addEventListener('load', (event) => {
         document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
         document.getElementById("imagesWidgetCheckBox").checked = configuration.imagesWidget;
         document.getElementById("featuredSnippetCheckBox").checked = configuration.featuredSnippet;
+        document.getElementById("dictionaryWidgetCheckBox").checked = configuration.dictionaryWidget;
+        document.getElementById("businessesWidgetCheckBox").checked = configuration.businessesWidget;
+        document.getElementById("topSightsWidgetCheckBox").checked = configuration.topSightsWidget;
+        document.getElementById("imageWithinResultCheckBox").checked = configuration.imageWithinResult;
 
-        document.getElementById("adBackgroundColorSelection").value  = configuration.adBackgroundColor;
-        document.getElementById("urlColorSelection").value  = configuration.urlColor;
+        document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
+        document.getElementById("urlColorSelection").value = configuration.urlColor;
 
         var classname = document.getElementsByClassName("adsDisplay");
 
@@ -230,7 +258,7 @@ window.addEventListener('load', (event) => {
 
     function sendToProgramJS(payload){
         chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-            chrome.tabs.sendMessage(tabs[0].id, payload);
+            chrome.tabs.sendMessage(tabs[0].id, payload); ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         });
     }
 
