@@ -1,6 +1,13 @@
 # Google-Search-Customizer
 ![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/icon280.png)
 
+## Where to download?
+
+You can add the extension to your browser by downloading it from the official extension websites for the following browsers:
+[Chrome](https://chrome.google.com/webstore/detail/google-search-ad-remover/pdhiefmcgnjohonhoobalejfnbminlkc), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/google-search-customizer/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search), [Edge](https://microsoftedge.microsoft.com/addons/detail/google-search-ad-remover-/eebiagooojcejfpkopfnehbnjljijnhl)
+
+The extension can also be installed manually like so: Download the files from Github -> In chrome open: Extensions -> Manage Extensions -> Load Unpacked and select the folder with the downloaded files.
+
 ## What does this extension do?
 
 This extension allows you to customize how your Google Search results are displayed. You can:
