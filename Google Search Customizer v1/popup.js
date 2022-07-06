@@ -23,8 +23,7 @@ window.addEventListener('load', (event) => {
         "featuredSnippet": false,
         "dictionaryWidget": false,
         "businessesWidget": false,
-        "topSightsWidget": false,
-        "imageWithinResult": false
+        "topSightsWidget": false
     };
     //Initialization////////////////////////////////////////////////////
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -134,10 +133,6 @@ window.addEventListener('load', (event) => {
         changeConfig("topSightsWidget", event.target.checked);
     });
 
-    document.getElementById("imageWithinResultCheckBox").addEventListener("change", event =>{
-        changeConfig("imageWithinResult", event.target.checked);
-    });
-
 
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
@@ -177,8 +172,7 @@ window.addEventListener('load', (event) => {
                 "featuredSnippet": false,
                 "dictionaryWidget": false,
                 "businessesWidget": false,
-                "topSightsWidget": false,
-                "imageWithinResult": false
+                "topSightsWidget": false
             }
         }
 
@@ -232,7 +226,6 @@ window.addEventListener('load', (event) => {
         document.getElementById("dictionaryWidgetCheckBox").checked = configuration.dictionaryWidget;
         document.getElementById("businessesWidgetCheckBox").checked = configuration.businessesWidget;
         document.getElementById("topSightsWidgetCheckBox").checked = configuration.topSightsWidget;
-        document.getElementById("imageWithinResultCheckBox").checked = configuration.imageWithinResult;
 
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;

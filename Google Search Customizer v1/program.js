@@ -39,8 +39,7 @@ if(url.includes(".google.") && isSearch()){
         "featuredSnippet": false,
         "dictionaryWidget": false,
         "businessesWidget": false,
-        "topSightsWidget": false,
-        "imageWithinResult": false
+        "topSightsWidget": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -192,6 +191,7 @@ function modifySearchResults(configuration){
         removeElements("#bres", 0);
         removeElements(".O3JH7", 2);
         
+        removeElements(".O8VmIc", 2); //Search widget in image search.
     }
 
     if(configuration.askWidget){
@@ -285,13 +285,10 @@ function modifySearchResults(configuration){
         removePaddingBeforeWidget(".UXerFf", 6);
     }
 
-    if(configuration.imageWithinResult){
-        removeElements(".W27f5e", 1);
-    }
-    
-
     //Images next to/in some search results
     if(configuration.images){
+        removeElements(".W27f5e", 1);
+
         ApplyToClass("SD80kd", function(element){
             element.style.display = "none";
         });
