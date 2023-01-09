@@ -120,31 +120,26 @@ function modifySearchResults(configuration){
         }
 
         if(configuration.adsDisplay == "standOut2"){
-            let tvcapElement = document.getElementById("tvcap");
-            let adsbottom = document.getElementById("bottomads");
-
+            //let tvcapElement = document.getElementById("tvcap");
+            
+            let tadsElement = document.getElementById("tads");
             //Color top ads if present.
-            if(tvcapElement != undefined)
-                tvcapElement.style.backgroundColor = configuration.adBackgroundColor;
-
-            //Color bottom ads if present.
-            if(tvcapElement != undefined){
-                if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
-                    adsbottom.style.backgroundColor = configuration.adBackgroundColor;
-                    adsbottom.style.padding = "5px";
+            if(tadsElement != undefined){
+                if(tadsElement.innerHTML != ""){
+                    //Color ads.
+                    tadsElement.style.backgroundColor = configuration.adBackgroundColor;
+                    tadsElement.style.padding = "10px";
                 }
             }
             
-            if(tvcapElement != undefined){
-                    //Color ads.
-                    tvcapElement.style.backgroundColor = configuration.adBackgroundColor;
-                    tvcapElement.style.padding = "5px";
+            let adsbottom = document.getElementById("bottomads");
+            //Color bottom ads if present.
+            if(adsbottom != undefined){
+                if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
+                    adsbottom.style.backgroundColor = configuration.adBackgroundColor;
+                    adsbottom.style.padding = "10px";
+                }
             }
-            
-            let tadsElement = document.getElementById("tads");
-            if(tadsElement != undefined)
-                tadsElement.style.padding = "10px";
-
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section(top).
