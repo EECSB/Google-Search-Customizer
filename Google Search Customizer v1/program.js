@@ -120,32 +120,31 @@ function modifySearchResults(configuration){
         }
 
         if(configuration.adsDisplay == "standOut2"){
-            let tawElement = document.getElementById("tvcap");
+            let tvcapElement = document.getElementById("tvcap");
             let adsbottom = document.getElementById("bottomads");
 
             //Color top ads if present.
-            if(tawElement != undefined)
-                tawElement.style.backgroundColor = configuration.adBackgroundColor;
+            if(tvcapElement != undefined)
+                tvcapElement.style.backgroundColor = configuration.adBackgroundColor;
 
             //Color bottom ads if present.
-            if(tawElement != undefined){
+            if(tvcapElement != undefined){
                 if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
                     adsbottom.style.backgroundColor = configuration.adBackgroundColor;
-                    adsbottom.style.padding = "10px";
+                    adsbottom.style.padding = "5px";
                 }
             }
             
-            if(tawElement != undefined){
-                ApplyToClass("tvcap", function(element){
+            if(tvcapElement != undefined){
                     //Color ads.
-                    element.style.backgroundColor = configuration.adBackgroundColor;
-                    element.style.padding = "10px";
-                });
+                    tvcapElement.style.backgroundColor = configuration.adBackgroundColor;
+                    tvcapElement.style.padding = "5px";
             }
+            
+            let tadsElement = document.getElementById("tads");
+            if(tadsElement != undefined)
+                tadsElement.style.padding = "10px";
 
-            ApplyToClass("tads", function(element){
-                element.style.padding = "10px";
-            });
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section(top).
