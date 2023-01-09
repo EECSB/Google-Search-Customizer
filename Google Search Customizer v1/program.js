@@ -206,7 +206,7 @@ function modifySearchResults(configuration){
         removeElements(".otisdd", 2); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
         removeElements(".M42dy", 8);
 
-        removePaddingBeforeWidget(".otisdd", 6);
+        removePaddingBeforeWidget(".otisdd", 6); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
         removePaddingBeforeWidget(".M42dy", 8);
     }
         
@@ -288,13 +288,14 @@ function modifySearchResults(configuration){
 
     //Images next to/in some search results
     if(configuration.images){
-        removeElements(".W27f5e", 1);
+        removeElements(".W27f5e", 1); //Not sure if still needed.
+        removeElements(".Sth6v", 0);
 
-        ApplyToClass("SD80kd", function(element){
+        ApplyToClass("SD80kd", function(element){ //Not sure if still needed.
             element.style.display = "none";
         });
         
-        removeElements(".fWhgmd", 4);
+        removeElements(".fWhgmd", 4); //Not sure if still needed.
 
         ApplyToClass("FxLDp", function(element){
             element.style.padding = "0";
