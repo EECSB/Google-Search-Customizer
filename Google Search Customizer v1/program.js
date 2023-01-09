@@ -203,9 +203,11 @@ function modifySearchResults(configuration){
     }
         
     if(configuration.twitterWidget){
-        removeElements(".otisdd", 2);
-        
+        removeElements(".otisdd", 2); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
+        removeElements(".M42dy", 8);
+
         removePaddingBeforeWidget(".otisdd", 6);
+        removePaddingBeforeWidget(".M42dy", 8);
     }
         
     if(configuration.newsWidget){
