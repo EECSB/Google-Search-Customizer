@@ -1,16 +1,23 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{2ce7df96-558d-4c2c-8d88-68606ebbe8db}",
+      "strict_min_version": "42.0"
+    }
+  },
 
   "name": "Google Search Ad Remover And Customizer",
   "description": "This extension gives you the ability to customize how your google search results look like.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "icons": {
     "128": "icon128.png",
     "48": "icon48.png",
     "16": "icon16.png"
   },
 
-  "browser_action": {
+  "action": {
     "default_icon": "icon16.png",
     "default_popup": "popup.html"
   },
@@ -21,10 +28,6 @@
     ],
     "js": ["program.js"]
   }],
-
-  "background": {
-    "scripts": ["background.js"]
-  },
 
   "permissions": [
     "storage"

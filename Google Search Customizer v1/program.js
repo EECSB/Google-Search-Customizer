@@ -40,7 +40,7 @@ if(url.includes(".google.") && isSearch()){
         "dictionaryWidget": false,
         "businessesWidget": false,
         "topSightsWidget": false,
-        "imageWithinResult": false
+        "otherMessages": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -99,7 +99,7 @@ function modifySearchResults(configuration){
         removeElements(".e1ycic", 0);
         //Remove 3 dots if present instead of arrow.
         removeElements(".D6lY4c", 0);
-        removeElements(".rIbAWc", 0);
+        //removeElements(".rIbAWc", 0); //causes problem by hiding the tools as the same class is also used there: https://github.com/EECSB/Google-Search-Customizer/issues/16
     }
 
 
@@ -121,32 +121,26 @@ function modifySearchResults(configuration){
         }
 
         if(configuration.adsDisplay == "standOut2"){
-            let tawElement = document.getElementById("tvcap");
-            let adsbottom = document.getElementById("bottomads");
-
+            //let tvcapElement = document.getElementById("tvcap");
+            
+            let tadsElement = document.getElementById("tads");
             //Color top ads if present.
-            if(tawElement != undefined)
-                tawElement.style.backgroundColor = configuration.adBackgroundColor;
-
+            if(tadsElement != undefined){
+                if(tadsElement.innerHTML != ""){
+                    //Color ads.
+                    tadsElement.style.backgroundColor = configuration.adBackgroundColor;
+                    tadsElement.style.padding = "10px";
+                }
+            }
+            
+            let adsbottom = document.getElementById("bottomads");
             //Color bottom ads if present.
-            if(tawElement != undefined){
+            if(adsbottom != undefined){
                 if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
                     adsbottom.style.backgroundColor = configuration.adBackgroundColor;
                     adsbottom.style.padding = "10px";
                 }
             }
-            
-            if(tawElement != undefined){
-                ApplyToClass("tvcap", function(element){
-                    //Color ads.
-                    element.style.backgroundColor = configuration.adBackgroundColor;
-                    element.style.padding = "10px";
-                });
-            }
-
-            ApplyToClass("tads", function(element){
-                element.style.padding = "10px";
-            });
         }
     }else if(configuration.adsDisplay == "remove"){
         //Remove whole ad section(top).
@@ -191,30 +185,35 @@ function modifySearchResults(configuration){
     if(configuration.searchWidget){
         removeElements("#bres", 0);
         removeElements(".O3JH7", 2);
+
+        removeElements(".YR2tRd", 2);
         
+        removeElements(".O8VmIc", 2); //Search widget in image search.
     }
 
     if(configuration.askWidget){
         removeElements(".JolIg", 4); //Not sure if still needed?
-        removeElements(".Wt5Tfe", 1);
+        removeElements(".EN1f2d", 4);
 
         removeElements(".Okagcf", 1); //For widgets inline/embedded into the search result.
 
-        removePaddingBeforeWidget(".Wt5Tfe", 2);
+        removePaddingBeforeWidget(".EN1f2d", 4);
     }
         
     if(configuration.twitterWidget){
-        removeElements(".otisdd", 2);
-        
-        removePaddingBeforeWidget(".otisdd", 6);
+        removeElements(".otisdd", 2); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
+        removeElements(".M42dy", 8);
+
+        removePaddingBeforeWidget(".otisdd", 6); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
+        removePaddingBeforeWidget(".M42dy", 8);
     }
         
     if(configuration.newsWidget){
         removeElements(".AHFbof", 4); //Class not always present in news widget.
-        removeElements(".aUSklf", 3);
+        removeElements(".aUSklf", 4);
 
         removePaddingBeforeWidget(".AHFbof", 4); //Class not always present in news widget.
-        removePaddingBeforeWidget(".aUSklf", 3);
+        removePaddingBeforeWidget(".aUSklf", 4);
     }
 
     if(configuration.mapsWidget){
@@ -231,7 +230,7 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.youtubeWidtget){ 
-        removeElements(".uVMCKf", 1);
+        removeElements(".uVMCKf", 2);
 
         removePaddingBeforeWidget(".uVMCKf", 2);
     }
@@ -258,7 +257,8 @@ function modifySearchResults(configuration){
 
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
-
+        removeElements(".hisnlb", 8); 
+        
         removePaddingBeforeWidget("#iur", 4); 
     }
 
@@ -285,18 +285,28 @@ function modifySearchResults(configuration){
         removePaddingBeforeWidget(".UXerFf", 6);
     }
 
-    if(configuration.imageWithinResult){
-        removeElements(".W27f5e", 1);
+    if(configuration.otherMessages){
+        removeElements(".WcS13d", 1);
+
+        removePaddingBeforeWidget(".WcS13d", 3);
     }
     
 
+
     //Images next to/in some search results
     if(configuration.images){
-        ApplyToClass("SD80kd", function(element){
+        removeElements(".Sth6v", 0);
+        removeElements(".AzcMvf", 1);
+
+
+        removeElements(".W27f5e", 1); //Not sure if still needed.
+
+        ApplyToClass("SD80kd", function(element){ //Not sure if still needed.
             element.style.display = "none";
         });
         
-        removeElements(".fWhgmd", 4);
+        removeElements(".fWhgmd", 4); //Not sure if still needed.
+
 
         ApplyToClass("FxLDp", function(element){
             element.style.padding = "0";
