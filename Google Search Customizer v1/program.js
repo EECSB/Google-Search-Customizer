@@ -98,7 +98,7 @@ function modifySearchResults(configuration){
         removeElements(".e1ycic", 0);
         //Remove 3 dots if present instead of arrow.
         removeElements(".D6lY4c", 0);
-        removeElements(".rIbAWc", 0);
+        //removeElements(".rIbAWc", 0); //causes problem by hiding the tools as the same class is also used there: https://github.com/EECSB/Google-Search-Customizer/issues/16
     }
 
 
@@ -254,6 +254,8 @@ function modifySearchResults(configuration){
 
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
+        //removeElements("", 4); 
+        
 
         removePaddingBeforeWidget("#iur", 4); 
     }
