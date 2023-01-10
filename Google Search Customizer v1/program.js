@@ -39,7 +39,8 @@ if(url.includes(".google.") && isSearch()){
         "featuredSnippet": false,
         "dictionaryWidget": false,
         "businessesWidget": false,
-        "topSightsWidget": false
+        "topSightsWidget": false,
+        "otherMessages": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -283,6 +284,14 @@ function modifySearchResults(configuration){
 
         removePaddingBeforeWidget(".UXerFf", 6);
     }
+
+    if(configuration.otherMessages){
+        removeElements(".WcS13d", 1);
+
+        removePaddingBeforeWidget(".WcS13d", 3);
+    }
+    
+
 
     //Images next to/in some search results
     if(configuration.images){
