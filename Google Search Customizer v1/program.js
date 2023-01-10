@@ -284,14 +284,18 @@ function modifySearchResults(configuration){
 
     //Images next to/in some search results
     if(configuration.images){
-        removeElements(".W27f5e", 1); //Not sure if still needed.
         removeElements(".Sth6v", 0);
+        removeElements(".AzcMvf", 1);
+        
+
+        removeElements(".W27f5e", 1); //Not sure if still needed.
 
         ApplyToClass("SD80kd", function(element){ //Not sure if still needed.
             element.style.display = "none";
         });
         
         removeElements(".fWhgmd", 4); //Not sure if still needed.
+
 
         ApplyToClass("FxLDp", function(element){
             element.style.padding = "0";
