@@ -254,7 +254,7 @@ function modifySearchResults(configuration){
 
     if(configuration.imagesWidget){
         removeElements("#iur", 4);
-        //removeElements("", 4); 
+        removeElements(".hisnlb", 9); 
         
 
         removePaddingBeforeWidget("#iur", 4); 
