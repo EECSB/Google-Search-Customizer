@@ -190,11 +190,11 @@ function modifySearchResults(configuration){
 
     if(configuration.askWidget){
         removeElements(".JolIg", 4); //Not sure if still needed?
-        removeElements(".Wt5Tfe", 1);
+        removeElements(".EN1f2d", 4);
 
         removeElements(".Okagcf", 1); //For widgets inline/embedded into the search result.
 
-        removePaddingBeforeWidget(".Wt5Tfe", 2);
+        removePaddingBeforeWidget(".EN1f2d", 4);
     }
         
     if(configuration.twitterWidget){
@@ -227,7 +227,7 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.youtubeWidtget){ 
-        removeElements(".uVMCKf", 1);
+        removeElements(".uVMCKf", 2);
 
         removePaddingBeforeWidget(".uVMCKf", 2);
     }
@@ -286,7 +286,7 @@ function modifySearchResults(configuration){
     if(configuration.images){
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
-        
+
 
         removeElements(".W27f5e", 1); //Not sure if still needed.
 
