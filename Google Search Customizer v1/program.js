@@ -184,6 +184,8 @@ function modifySearchResults(configuration){
     if(configuration.searchWidget){
         removeElements("#bres", 0);
         removeElements(".O3JH7", 2);
+
+        removeElements(".YR2tRd", 2);
         
         removeElements(".O8VmIc", 2); //Search widget in image search.
     }
