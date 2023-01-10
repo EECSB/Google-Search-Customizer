@@ -209,10 +209,10 @@ function modifySearchResults(configuration){
         
     if(configuration.newsWidget){
         removeElements(".AHFbof", 4); //Class not always present in news widget.
-        removeElements(".aUSklf", 3);
+        removeElements(".aUSklf", 4);
 
         removePaddingBeforeWidget(".AHFbof", 4); //Class not always present in news widget.
-        removePaddingBeforeWidget(".aUSklf", 3);
+        removePaddingBeforeWidget(".aUSklf", 4);
     }
 
     if(configuration.mapsWidget){
