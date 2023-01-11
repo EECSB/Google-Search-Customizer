@@ -307,10 +307,10 @@ function modifySearchResults(configuration){
         
         removeElements(".fWhgmd", 4); //Not sure if still needed.
 
-
-        ApplyToClass("FxLDp", function(element){
+        //Seems to affect all the results. Will disable for now.
+        /*ApplyToClass("FxLDp", function(element){ 
             element.style.padding = "0";
-        });
+        });*/
     }
 
     //Color Url////////////////////////////////////////////////////////////////
