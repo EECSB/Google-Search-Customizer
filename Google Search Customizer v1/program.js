@@ -202,10 +202,12 @@ function modifySearchResults(configuration){
         
     if(configuration.twitterWidget){
         removeElements(".otisdd", 2); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
-        removeElements(".M42dy", 8);
+        //removeElements(".M42dy", 8);
+        removeElementsFromTo(".M42dy", ".ULSxyf", 8);
 
         removePaddingBeforeWidget(".otisdd", 6); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
-        removePaddingBeforeWidget(".M42dy", 8);
+        //removePaddingBeforeWidget(".M42dy", 8);
+        removePaddingBeforeWidgetFromTo(".M42dy", 8);
     }
         
     if(configuration.newsWidget){
@@ -348,6 +350,42 @@ function modifySearchResults(configuration){
 
 
 //Search results modification functions/////////////////////////////////////////
+
+function removePaddingBeforeWidgetFromTo(name, parentName, maxParentNum){
+    if(name[0] == '.'){
+        name = name.replace('.', '');
+        const elements = document.getElementsByClassName(name);
+        
+        let node;
+        for (let i = 0; i < elements.length; i++){
+            node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
+
+            if(node != undefined && node != null){
+                let prevNode = node.previousElementSibling;
+                if(prevNode != undefined)
+                    prevNode.style.margin = "0px";
+                else
+                    node.style.margin = "0px";
+            }
+        }
+    }else if(name[0] == '#'){
+        name = name.replace('#', '');
+
+        const element = document.getElementById(name);
+        if(element != undefined){
+            let node = getParentNodeFromTo(element, parentName, maxParentNum);
+            if(node != undefined  && node != null){
+                let prevNode = node.previousElementSibling;
+                if(prevNode != undefined)
+                    prevNode.style.margin = "0px";
+                else
+                    node.style.margin = "0px";
+            }
+        }     
+    }else{
+        throw "Undefined element!";
+    }
+}
 
 function removePaddingBeforeWidget(name, parentNum){
     if(name[0] == '.'){
@@ -545,11 +583,59 @@ function removeElements(name, parentNum){
     }
 }
 
+function removeElementsFromTo(name, parentName, maxParentNum){
+    if(name[0] == '.'){
+        name = name.replace('.', '');
+        const elements = document.getElementsByClassName(name);
+
+        for (let i = 0; i < elements.length; i++){
+            let node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
+            if(node != null)
+                node.style.display = 'none';
+        }
+    }else if(name[0] == '#'){
+        name = name.replace('#', '');
+        const element = document.getElementById(name);
+
+        if(element != null){
+            let node = getParentNodeFromTo(element, parentName, maxParentNum);
+            if(node != null)
+                node.style.display = 'none';
+        }
+    }else{
+        throw "Undefined element!";
+    }
+}
+
+function getParentNodeFromTo(element, parentName, maxParentNum){
+    let parent = element;
+    let returnParent = null;
+
+    for(let i = 0; maxParentNum > i; i++){
+        parent = parent.parentNode;
+        
+        if(parentName[0] == '.'){
+            let parentNameTrimmed = parentName.substring(1)
+            if(parent.className.includes(parentNameTrimmed)){
+                returnParent = parent;
+                break;
+            } 
+        }else if(parentName[0] == '#'){
+            if(parentName == '#' + parent.id){
+                returnParent = parent;
+                break;
+            } 
+        }
+    }
+
+    return returnParent;
+}
+
 function getParentNode(element, parentNum){
     let parent = element;
 
     for(let i = 0; parentNum > i; i++)
-        parent = parent.parentNode
+        parent = parent.parentNode;
 
     return parent;
 }
