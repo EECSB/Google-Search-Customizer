@@ -222,7 +222,10 @@ function modifySearchResults(configuration){
         removeElements(".AEprdc", 1); //Not sure if this class is still relevant.
         removeElements(".kqmHwe", 1);
 
+        removeElementsFromTo(".Qq3Lb", ".ULSxyf", 3);
+
         removePaddingBeforeWidget(".kqmHwe", 4);
+        removePaddingBeforeWidgetFromTo(".Qq3Lb", ".ULSxyf", 3);
     }
 
     if(configuration.mapsFindResultsOnWidget){
