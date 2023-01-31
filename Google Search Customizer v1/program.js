@@ -334,7 +334,8 @@ function modifySearchResults(configuration){
             document.getElementsByClassName("LC20lb"), 
             document.getElementsByClassName("st"),
             document.getElementsByClassName("cbphWd"),
-            document.getElementsByClassName("fl")
+            document.getElementsByClassName("fl"),
+            document.getElementsByClassName("VwiC3b")
         ]; 
 
         //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
