@@ -54,13 +54,28 @@ if(url.includes(".google.") && isSearch()){
             });
         }
     });
+
     // set configuration object to the saved one and set run main function
     function sendToMain(storedConfiguration) {
         configuration = storedConfiguration;
         modifySearchResults(configuration["configuration"]);
     }
-}
 
+    // register ajax event listener so we can reapply the styling on endless scroll page refresh
+    /*var requestObserver = new PerformanceObserver( onRequestsObserved );
+    requestObserver.observe( { type: 'resource' } );
+
+    function onRequestsObserved( batch ) {
+        const entries = batch.getEntries();
+        const requestWasMade = entries.some(obj => obj.initiatorType.includes('xmlhttprequest'));
+
+        if(requestWasMade){
+            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+                modifySearchResults(storedConfiguration["configuration"]);
+            });
+        }
+    }*/
+}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -189,6 +204,7 @@ function modifySearchResults(configuration){
         removeElements(".YR2tRd", 2);
         
         removeElements(".O8VmIc", 2); //Search widget in image search.
+
     }
 
     if(configuration.askWidget){
