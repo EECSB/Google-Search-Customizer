@@ -10,7 +10,7 @@
 
   "name": "Google Search Ad Remover And Customizer",
   "description": "This extension gives you the ability to customize how your google search results look like.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "icons": {
     "128": "icon128.png",
     "48": "icon48.png",
