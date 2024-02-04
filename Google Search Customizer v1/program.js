@@ -40,7 +40,8 @@ if(url.includes(".google.") && isSearch()){
         "dictionaryWidget": false,
         "businessesWidget": false,
         "topSightsWidget": false,
-        "otherMessages": false
+        "otherMessages": false,
+        "siteFavicons": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -271,7 +272,6 @@ function modifySearchResults(configuration){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
         removeElements(".TQc1id", 0);
-         
     }
 
     if(configuration.ratingsWidget){
@@ -323,12 +323,16 @@ function modifySearchResults(configuration){
         removePaddingBeforeWidget(".WcS13d", 3);
     }
     
-
+    if(configuration.siteFavicons){
+        removeElements(".H9lube", 0);
+    }
 
     //Images next to/in some search results
     if(configuration.images){
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
+        removeElements(".SuXxEf", 0);
+        
 
 
         removeElements(".W27f5e", 1); //Not sure if still needed.
