@@ -35,8 +35,8 @@ if(checkIfRun()){
         "mapsWidget": false,
         "sideBarWidget": false,
         "ratingsWidget": false,
-        "urlColor" : "green",
-        "adBackgroundColor" : "antiquewhite",
+        "urlColor" : "#008000",
+        "adBackgroundColor" : "#faebd7",
         "removeEmojis": false,
         "youtubeWidtget": false,
         "images": false,
@@ -180,7 +180,6 @@ function modifySearchResults(configuration){
         //Remove whole ad section.
         removeElements(".ads-ad", 0);
     }
-
     
     //Move Url////////////////////////////////////////////////////////////////
     if(configuration.moveUrl){
@@ -472,13 +471,21 @@ function setUrlColor(urlColor){
     if(urlColor != ""){
         let listOfElementLists = [
             document.getElementsByClassName("qLRx3b"), //url part
-            document.getElementsByClassName("ylgVCe")//, //url part
+            document.getElementsByClassName("ylgVCe"), //url part
         ]
 
         //Set the text color for each element.
         forEachDoThis(listOfElementLists, function(element){
             element.style.color = urlColor;
         });
+
+        //Apply to the child of byrV5b //Not the nicest implementation but it's good enough for now.
+        const elements = document.getElementsByClassName("byrV5b");
+        for(element of elements){
+            for(child of element.childNodes){
+                child.style.color = urlColor;
+            }
+        }
     }
 }
 

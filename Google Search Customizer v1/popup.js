@@ -12,8 +12,8 @@ window.addEventListener('load', (event) => {
         "mapsWidget": false,
         "sideBarWidget": false,
         "ratingsWidget": false,
-        "urlColor" : "green",
-        "adBackgroundColor" : "antiquewhite",
+        "urlColor" : "#008000",
+        "adBackgroundColor" : "#faebd7",
         "removeEmojis": false,
         "youtubeWidtget": false,
         "images": false,
@@ -149,16 +149,17 @@ window.addEventListener('load', (event) => {
     });
 
     //Color Selection /////
-    document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
+    document.getElementById("adBackgroundColorSelection").addEventListener("input", event =>{
         changeConfig("adBackgroundColor", event.target.value);
     });
 
-    document.getElementById("urlColorSelection").addEventListener("change", event =>{
+    document.getElementById("urlColorSelection").addEventListener("input", event =>{
         changeConfig("urlColor", event.target.value);
     });
     
     //Button///////////////
     document.getElementById("defaultSettings").addEventListener("click", restoreDefaultConfig);
+
 
     function restoreDefaultConfig(){
         const defaultConfiguration = {
@@ -175,8 +176,8 @@ window.addEventListener('load', (event) => {
                 "mapsWidget": false,
                 "sideBarWidget": false,
                 "ratingsWidget": false,
-                "urlColor": "green",
-                "adBackgroundColor": "antiquewhite",
+                "urlColor": "#008000",
+                "adBackgroundColor": "#faebd7",
                 "removeEmojis": false,
                 "youtubeWidtget": false,
                 "images": false,
