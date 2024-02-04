@@ -25,7 +25,8 @@ window.addEventListener('load', (event) => {
         "businessesWidget": false,
         "topSightsWidget": false,
         "otherMessages": false,
-        "siteFavicons": false
+        "siteFavicons": false,
+        "videoTumbnails": false
     };
     //Initialization////////////////////////////////////////////////////
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -141,7 +142,11 @@ window.addEventListener('load', (event) => {
 
     document.getElementById("siteFaviconsCheckBox").addEventListener("change", event =>{
         changeConfig("siteFavicons", event.target.checked);
-    });  
+    });
+    
+    document.getElementById("videoTumbnailsCheckBox").addEventListener("change", event =>{
+        changeConfig("videoTumbnails", event.target.checked);
+    });
 
     //Color Selection /////
     document.getElementById("adBackgroundColorSelection").addEventListener("change", event =>{
@@ -183,7 +188,8 @@ window.addEventListener('load', (event) => {
                 "businessesWidget": false,
                 "topSightsWidget": false,
                 "otherMessages": false,
-                "siteFavicons": false
+                "siteFavicons": false,
+                "videoTumbnails": false
             }
         }
 
@@ -239,6 +245,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("topSightsWidgetCheckBox").checked = configuration.topSightsWidget;
         document.getElementById("otherMessagesCheckBox").checked = configuration.otherMessages;
         document.getElementById("siteFaviconsCheckBox").checked = configuration.siteFavicons;
+        document.getElementById("videoTumbnailsCheckBox").checked = configuration.videoTumbnails;
 
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;

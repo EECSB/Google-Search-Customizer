@@ -48,7 +48,8 @@ if(checkIfRun()){
         "businessesWidget": false,
         "topSightsWidget": false,
         "otherMessages": false,
-        "siteFavicons": false
+        "siteFavicons": false,
+        "videoTumbnails": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -329,6 +330,7 @@ function modifySearchResults(configuration){
         removeElements(".H9lube", 0);
     }
 
+
     //Images next to/in some search results
     if(configuration.images){
         removeElements(".Sth6v", 0);
@@ -350,6 +352,12 @@ function modifySearchResults(configuration){
             element.style.padding = "0";
         });*/
     }
+
+    //Video thumbnails next to/in some search results
+    if(configuration.videoTumbnails){
+        removeElements(".gY2b2c", 0);
+    }
+    
 
     //Color Url////////////////////////////////////////////////////////////////
     if(configuration.colorUrl){
