@@ -126,6 +126,9 @@ function modifySearchResults(configuration){
         removeElements(".e1ycic", 0);
         //Remove 3 dots if present instead of arrow.
         removeElements(".D6lY4c", 0);
+        //Remove 3 dots if present instead of arrow in ads.
+        removeElements(".ONMH0e", 0);
+
         //removeElements(".rIbAWc", 0); //causes problem by hiding the tools as the same class is also used there: https://github.com/EECSB/Google-Search-Customizer/issues/16
     }
 
@@ -461,8 +464,8 @@ function removePaddingBeforeWidget(name, parentNum){
 function setUrlColor(urlColor){
     if(urlColor != ""){
         let listOfElementLists = [
-            document.getElementsByClassName("iUh30")//, //url part
-            //document.getElementsByClassName("eipWBe"); //urn part
+            document.getElementsByClassName("qLRx3b"), //url part
+            document.getElementsByClassName("ylgVCe")//, //url part
         ]
 
         //Set the text color for each element.
