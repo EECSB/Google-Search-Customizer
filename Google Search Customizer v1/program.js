@@ -151,24 +151,16 @@ function modifySearchResults(configuration){
         }
 
         if(configuration.adsDisplay == "standOut2"){
-            //let tvcapElement = document.getElementById("tvcap");
-            
-            let tadsElement = document.getElementById("tads");
-            //Color top ads if present.
-            if(tadsElement != undefined){
-                if(tadsElement.innerHTML != ""){
-                    //Color ads.
-                    tadsElement.style.backgroundColor = configuration.adBackgroundColor;
-                    tadsElement.style.padding = "10px";
-                }
-            }
-            
-            let adsbottom = document.getElementById("bottomads");
-            //Color bottom ads if present.
-            if(adsbottom != undefined){
-                if(adsbottom.innerHTML != ""){ //Make sure the div isn't empty. 
-                    adsbottom.style.backgroundColor = configuration.adBackgroundColor;
-                    adsbottom.style.padding = "10px";
+            let adElements = document.querySelectorAll('#tads, #tadsb, #bottomads'); //tvcap
+
+            //Color ads if any are present.
+            if(adElements != undefined){
+                for(adElement of adElements){
+                    if(adElement.innerHTML != ""){
+                        //Color ads.
+                        adElement.style.backgroundColor = configuration.adBackgroundColor;
+                        adElement.style.padding = "10px";
+                    }
                 }
             }
         }
@@ -586,8 +578,8 @@ function decreaseResultDistance(className){
 
 //Utils/////////////////////////////////////////////////////////////////////////
 
-function removeElements(name, parentNum, text){
-    const elements = document.getElementsByClassName(name);
+function removeElements(selector, parentNum, text){
+    const elements = document.querySelectorAll(selector);
     for (let i = 0; i < elements.length; i++){
         let node;
         if(parentNum == -1)
@@ -600,24 +592,12 @@ function removeElements(name, parentNum, text){
     }
 }
 
-function removeElements(name, parentNum){
-    if(name[0] == '.'){
-        name = name.replace('.', '');
-        const elements = document.getElementsByClassName(name);
+function removeElements(selector, parentNum){
+    const elements = document.querySelectorAll(selector);
 
-        for (let i = 0; i < elements.length; i++){
-            let node = getParentNode(elements[i], parentNum);
-            node.style.display = 'none';
-        }
-    }else if(name[0] == '#'){
-        name = name.replace('#', '');
-
-        const element = document.getElementById(name);
-
-        if(element != null)
-            getParentNode(element, parentNum).style.display = 'none';
-    }else{
-        throw "Undefined element!";
+    for (let i = 0; i < elements.length; i++){
+        let node = getParentNode(elements[i], parentNum);
+        node.style.display = 'none';
     }
 }
 
