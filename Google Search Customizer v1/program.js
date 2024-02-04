@@ -1,18 +1,25 @@
-//Check if this is actually the Google search engine and not some other google site.
-function isSearch(){
-    const classname = document.getElementsByClassName("RNNXgb"); //Class present on one of the divs of the Google search bar.
-
-    if(classname != undefined && classname != null)
-        return true;
-    else
+//Checks if this is actually the Google search engine and not some other site.
+function checkIfRun(){
+    //Don't run script if not on a google domain.
+    if(!window.location.href.includes(".google."))
         return false;
+
+    const elements = document.getElementsByTagName("html");
+
+    for(element of elements){
+        const itemTypeValue = element.getAttribute('itemtype');        
+        
+        //Only run script if we are on the search results page.
+        if(itemTypeValue !== null){
+            if(itemTypeValue.includes('SearchResultsPage'))
+                return true;
+            else
+                return false;
+        }
+    }
 }
 
-//Get URL of current page.
-const url = window.location.href;
-
-//Only run on Google domain.
-if(url.includes(".google.") && isSearch()){
+if(checkIfRun()){
     //Initialization///////////////////////////////////////////////////////////
 
     let configuration = {
