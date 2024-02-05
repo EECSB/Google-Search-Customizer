@@ -122,7 +122,12 @@ function modifySearchResults(configuration){
         removeElements(".qdrjAc", 0);
 
         //Decrease distance between results.
-        decreaseResultDistance("TbwUpd"); //Normal results.
+        let elements = document.getElementsByClassName("TbwUpd");
+        for (let i = 0; i < elements.length; i++){
+            br = elements[i].parentNode.getElementsByTagName('br');
+            if(br.length != 0)
+                br[0].parentNode.removeChild(br[0]);
+        }
     }
 
 
@@ -179,27 +184,55 @@ function modifySearchResults(configuration){
         removeElements("#tadsb", 0);
         //Remove whole ad section.
         removeElements(".ads-ad", 0);
+
+        //If top ads are present move up search results to reduce the gap.
+        if(document.getElementById("tads") != null)
+            document.getElementById("center_col").style.top = "-80px";
     }
     
     //Move Url////////////////////////////////////////////////////////////////
     if(configuration.moveUrl){
-        cutPasteUrl();
-        cutPasteUrlPagesThingy();
-        
-        //Decrease distance between results.
-        decreaseResultDistance("TbwUpd"); //Normal results.
+        //Push url and favicon under title.
+        const elements = document.querySelectorAll('h3.LC20lb');
+        for(element of elements){
+            element.style.marginTop = '0';
+            element.style.marginBottom = element.nextSibling.clientHeight + "px"; //Same as the height of the url div
+
+            element.nextSibling.style.marginTop = /*element.clientHeight*/50 + "px"; //Same as height of the h3 element before it.
+        }
+
+        //Decrease vertical spacing between results.
+        const searchResults = document.querySelectorAll('.g.Ww4FFb.vt6azd.tF2Cxc.asEBEc');
+        for(result of searchResults){
+            result.style.marginBottom = '0';
+        }
     }
 
 
-    //MoveUrl////////////////////////////////////////////////////////////////
+    //Move Url(within Ads)////////////////////////////////////////////////////
     if(configuration.moveUrl && (configuration.adsDisplay != "remove")){
-        cutPasteUrlAds();
+        //Push url and favicon under title.
+        const elements = document.querySelectorAll('.CCgQ5.vCa9Yd.QfkTvb.N8QANc.Va3FIb.EE3Upf');
+        for(element of elements){
+            element.style.marginTop = '0';
+            element.style.marginBottom = element.nextSibling.clientHeight + "px"; //Same as the height of the url div
+
+            element.nextSibling.style.marginTop = element.clientHeight + "px"; //Same as height of the h3 element before it.
+        }
         
-        //Decrease distance between results.
-        decreaseResultDistance("sA5rQ"); //Ads
-        decreaseResultDistance("TbwUpd"); //Normal results.
+        //Decrease vertical spacing between results.
+        const searchResults = document.querySelectorAll('.d8lRkd');
+        for(result of searchResults){
+            result.style.marginBottom = '0';
+        }
+
+        //If top ads are present move up search results to reduce the gap.
+        if(document.getElementById("tads") != null)
+            document.getElementById("center_col").style.top = "-80px";
     }
 
+
+    
 
     //Remove Widgets///////////////////////////////////////////
 
@@ -256,6 +289,12 @@ function modifySearchResults(configuration){
 
         removePaddingBeforeWidget(".kqmHwe", 4);
         removePaddingBeforeWidgetFromTo(".Qq3Lb", ".ULSxyf", 3);
+
+        //Map + Images widget
+        removeElements(".Lx2b0d", 12);
+
+        //City name
+        removeElements(".XqFnDf", 0);
     }
 
     if(configuration.mapsFindResultsOnWidget){
@@ -284,9 +323,13 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.thingsToDoWidget){
+        ///Not sure if still needed? //////////////
         removeElements(".IYoemc", 3);
-
         removePaddingBeforeWidget(".IYoemc", 3);
+        ///////////////////////////////////////////
+        
+        removeElements(".NfrtPd.UE0K3b.QsV5nc", 7);
+        removePaddingBeforeWidget(".NfrtPd.UE0K3b.QsV5nc", 7);
     }
 
     if(configuration.imagesWidget){
@@ -297,7 +340,7 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.featuredSnippet){
-        removeElements(".M8OgIe", 0);
+        removeElements("#Odp5De", 0);
         removeElements(".yKMVIe", 10);
     }
     
@@ -330,13 +373,18 @@ function modifySearchResults(configuration){
     }
 
 
+
     //Images next to/in some search results
     if(configuration.images){
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
         removeElements(".SuXxEf", 0);
-        
 
+        removeElements(".kb0PBd.cvP2Ce.LnCrMe.QgmGr", 0);
+        removeElements(".EPx5le", 2);
+
+        //////////////////////////////////////////////
+        //Remove maybe?
 
         removeElements(".W27f5e", 1); //Not sure if still needed.
 
@@ -346,10 +394,7 @@ function modifySearchResults(configuration){
         
         removeElements(".fWhgmd", 4); //Not sure if still needed.
 
-        //Seems to affect all the results. Will disable for now.
-        /*ApplyToClass("FxLDp", function(element){ 
-            element.style.padding = "0";
-        });*/
+        //////////////////////////////////////////////
     }
 
     //Video thumbnails next to/in some search results
@@ -357,7 +402,6 @@ function modifySearchResults(configuration){
         removeElements(".gY2b2c", 0);
     }
     
-
     //Color Url////////////////////////////////////////////////////////////////
     if(configuration.colorUrl){
         //Set url color
@@ -365,7 +409,6 @@ function modifySearchResults(configuration){
         //Set url color in ads.
         setUrlColorAds(configuration.urlColor);
     }
-
 
     //Remove emojis//////////////////////////////////////////////////////////////
     if(configuration.removeEmojis){
@@ -385,8 +428,6 @@ function modifySearchResults(configuration){
                 element.innerText = cleanedString;
         });
     }
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,75 +437,35 @@ function modifySearchResults(configuration){
 //Search results modification functions/////////////////////////////////////////
 
 function removePaddingBeforeWidgetFromTo(name, parentName, maxParentNum){
-    if(name[0] == '.'){
-        name = name.replace('.', '');
-        const elements = document.getElementsByClassName(name);
-        
-        let node;
-        for (let i = 0; i < elements.length; i++){
-            node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
+    let elements = document.querySelectorAll(name);
 
-            if(node != undefined && node != null){
-                let prevNode = node.previousElementSibling;
-                if(prevNode != undefined)
-                    prevNode.style.margin = "0px";
-                else
-                    node.style.margin = "0px";
-            }
+    for (let i = 0; i < elements.length; i++){
+        let node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
+
+        if(node != undefined && node != null){
+            let prevNode = node.previousElementSibling;
+            if(prevNode != undefined)
+                prevNode.style.margin = "0px";
+            else
+                node.style.margin = "0px";
         }
-    }else if(name[0] == '#'){
-        name = name.replace('#', '');
-
-        const element = document.getElementById(name);
-        if(element != undefined){
-            let node = getParentNodeFromTo(element, parentName, maxParentNum);
-            if(node != undefined  && node != null){
-                let prevNode = node.previousElementSibling;
-                if(prevNode != undefined)
-                    prevNode.style.margin = "0px";
-                else
-                    node.style.margin = "0px";
-            }
-        }     
-    }else{
-        throw "Undefined element!";
     }
 }
 
 function removePaddingBeforeWidget(name, parentNum){
-    if(name[0] == '.'){
-        name = name.replace('.', '');
-        const elements = document.getElementsByClassName(name);
-        
-        let node;
-        for (let i = 0; i < elements.length; i++){
-            node = getParentNode(elements[i], parentNum);
+    let elements = document.querySelectorAll(name);
 
-            if(node != undefined){
-                let prevNode = node.previousElementSibling;
-                if(prevNode != undefined)
-                    prevNode.style.margin = "0px";
-                else
-                    node.style.margin = "0px";
-            }
+    for (let i = 0; i < elements.length; i++){
+        let node = getParentNode(elements[i], parentNum);
+
+        if(node != undefined){
+            let prevNode = node.previousElementSibling;
+            if(prevNode != undefined)
+                prevNode.style.margin = "0px";
+            else
+                node.style.margin = "0px";
         }
-    }else if(name[0] == '#'){
-        name = name.replace('#', '');
-
-        const element = document.getElementById(name);
-        if(element != undefined){
-            let node = getParentNode(element, parentNum);
-            if(node != undefined){
-                let prevNode = node.previousElementSibling;
-                if(prevNode != undefined)
-                    prevNode.style.margin = "0px";
-                else
-                    node.style.margin = "0px";
-            }
-        }     
-    }else{
-        throw "Undefined element!";
-    }
+    }    
 }
 
 function setUrlColor(urlColor){
@@ -495,102 +496,6 @@ function setUrlColorAds(urlColor){
 
         for(let i = 0; urls.length > i; i++)
             urls[i].style.color = urlColor;
-    }
-}
-
-function cutPasteUrl(){
-    let elements = document.getElementsByClassName("TbwUpd");
-    let elementsArrow = document.getElementsByClassName("eFM0qc");
-
-    //Set elements to flex to always push url under title.
-    for(let i = 0; i < elements.length; i++){
-        elements[i].style.display = "flex";
-    }
-
-    let elementsG = document.getElementsByClassName("g");
-    //Decrese margin.
-    for(let i = 0; i < elementsG.length; i++){
-        elementsG[i].style.margin = "0px 0px 20px 0px";
-    }
-    
-    //Remove <br>.
-    for(let i = 0; i < elements.length; i++){
-        let brTags = elements[i].parentNode.getElementsByTagName("BR");
-        for(berTag of brTags){
-            berTag.parentNode.removeChild(berTag);
-        }
-    }
-
-    //Insert url into new position.
-    for (let i = 0; i < elements.length; i++){
-        if(!elements[i].className.includes("NJjxre")){
-            let element = elements[i]; //Get url element.
-            let parentElement = element.parentNode.parentNode; //Get parent element
-            
-            //Get the element before which the url has to be inserted.
-            insertBeforeElement = parentElement.childNodes[0];
-            
-            //insert element in new position.
-            insertAfter(element, insertBeforeElement); //parentElement.insertBefore(element, insertBeforeElement);
-        }
-    }
-
-    //Remove elements.
-    for (let i = 0; elements.length > i; i++){
-        if(elements[i].className.includes("NJjxre")){
-            //Remove element.
-            elements[i].parentNode.removeChild(elements[i]);
-            i--;
-        }
-    }
-}
-
-function cutPasteUrlAds(){
-    let elements = document.getElementsByClassName("ads-visurl");
-    
-    for (let i = 0; i < elements.length; i++){
-        if(!elements[i].className.includes("NJjxre")){
-            let element = elements[i]; //Get url element.
-            let parentElement = element.parentNode.parentNode; //Get parent element
-            
-            //Get the element before which the url has to be inserted.
-            insertBeforeElement = parentElement.childNodes[0];
-            
-            //insert element in new position.
-            insertAfter(element, insertBeforeElement); //parentElement.insertBefore(element, insertBeforeElement);
-        }
-    }
-}
-
-function cutPasteUrlPagesThingy(){
-    let elements = document.getElementsByClassName("qdrjAc");
-    let elementsConst = [];
-
-    for (let i = 0; i < elements.length; i++){
-        elementsConst.push(elements[i].getAttribute('class'));
-    }
-
-    for (let i = 0; i < elements.length; i++){
-        //if(!elementsConst[i].includes("qks8td")){
-            let element = elements[i];
-            let parentElement = element.parentNode.parentNode.parentNode;
-            
-            elements[i].parentNode.removeChild(elements[i]);
-    
-            insertBeforeElement = parentElement.childNodes[1]
-    
-            parentElement.insertBefore(element, insertBeforeElement);
-        //} 
-    }
-}
-
-function decreaseResultDistance(className){
-    elements = document.getElementsByClassName(className);
-
-    for (let i = 0; i < elements.length; i++){
-        br = elements[i].parentNode.getElementsByTagName('br');
-        if(br.length != 0)
-            br[0].parentNode.removeChild(br[0]);
     }
 }
 
