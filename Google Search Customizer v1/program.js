@@ -149,14 +149,14 @@ function modifySearchResults(configuration){
     //Modify Ads///////////////////////////////////////////////////////////////////////
     if(configuration.adsDisplay == "standOut1" || configuration.adsDisplay == "standOut2"){
         //Make ad more obvious.
-        let element = document.getElementsByClassName("CnP9N");
+        let element = document.querySelectorAll(".U3A9Ac.qV8iec");
 
         for (let i = 0; i < element.length; i++){
             element[i].style.color = "green";
             element[i].style.border = "1px solid green";
             element[i].style.borderRadius = "5px";
-            element[i].style.margin = "0px 5px 0px 0px";
-            element[i].style.padding = "0px 0px 0px 5px";
+            element[i].style.margin = "0px";
+            element[i].style.padding = "0px 5px 0px 5px";
 
             if(configuration.adsDisplay == "standOut2"){
                 element[i].style.backgroundColor = configuration.adBackgroundColor;
