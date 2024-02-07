@@ -122,12 +122,14 @@ function modifySearchResults(configuration){
         removeElements(".qdrjAc", 0);
 
         //Decrease distance between results.
-        let elements = document.getElementsByClassName("TbwUpd");
+        //If this is left enabled the results will have no spacing between them whatsoever.
+        //Seems like this isn't needed anymore?
+        /*let elements = document.getElementsByClassName("TbwUpd");
         for (let i = 0; i < elements.length; i++){
             br = elements[i].parentNode.getElementsByTagName('br');
             if(br.length != 0)
                 br[0].parentNode.removeChild(br[0]);
-        }
+        }*/
     }
 
 
