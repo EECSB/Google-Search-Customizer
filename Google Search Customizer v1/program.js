@@ -188,8 +188,9 @@ function modifySearchResults(configuration){
         removeElements(".ads-ad", 0);
 
         //If top ads are present move up search results to reduce the gap.
-        if(document.getElementById("tads") != null)
-            document.getElementById("center_col").style.top = "-80px";
+        //Disable this as in come cases the search results will go over the top bar.
+        //if(document.getElementById("tads") != null)
+        //    document.getElementById("center_col").style.top = "-80px";
     }
     
     //Move Url////////////////////////////////////////////////////////////////
@@ -229,8 +230,9 @@ function modifySearchResults(configuration){
         }
 
         //If top ads are present move up search results to reduce the gap.
-        if(document.getElementById("tads") != null)
-            document.getElementById("center_col").style.top = "-80px";
+        //Disable this as in come cases the search results will go over the top bar.
+        //if(document.getElementById("tads") != null)
+        //   document.getElementById("center_col").style.top = "-80px";
     }
 
 
@@ -382,6 +384,7 @@ function modifySearchResults(configuration){
         removeElements(".AzcMvf", 1);
         removeElements(".SuXxEf", 0);
 
+        removeElements(".kb0PBd.cvP2Ce.LnCrMe", 0);
         removeElements(".kb0PBd.cvP2Ce.LnCrMe.QgmGr", 0);
         removeElements(".EPx5le", 2);
 
