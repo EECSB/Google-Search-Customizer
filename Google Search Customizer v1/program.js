@@ -374,6 +374,7 @@ function modifySearchResults(configuration){
     
     if(configuration.siteFavicons){
         removeElements(".H9lube", 0);
+        removeElements(".DDKf1c", 0);
     }
 
 
