@@ -3,6 +3,10 @@ body {
     width: 400px;
 }
 
+#titleWrapper{
+    display: inline-block;
+}
+
 #optionsWrapper{
     font-size: 15px;
 }
@@ -99,3 +103,38 @@ a{
     height: 20px;
     width: 30px;
 }
+
+/******** Dark mode styling ********/
+
+#darkModeButtonWrapper{
+    display: inline-block; 
+    margin-left: 20px; 
+    border: 2px solid white;
+}
+
+/* Light Mode (default) */
+body {
+    background-color: white;
+    color: black;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode h3, .dark-mode h5 {
+    color: #e0e0e0;
+}
+
+/* Button styles */
+.dark-mode-toggle {
+    padding: 5px 10px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/***********************************/

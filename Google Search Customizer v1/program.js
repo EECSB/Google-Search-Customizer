@@ -42,6 +42,7 @@ if(checkIfRun()){
         "images": false,
         "mapsFindResultsOnWidget": false,
         "thingsToDoWidget": false,
+        "thingsToKnowWidget": false,
         "imagesWidget": false,
         "featuredSnippet": false,
         "dictionaryWidget": false,
@@ -49,7 +50,8 @@ if(checkIfRun()){
         "topSightsWidget": false,
         "otherMessages": false,
         "siteFavicons": false,
-        "videoTumbnails": false
+        "videoTumbnails": false,
+        "theme": "light"
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -117,7 +119,7 @@ function modifySearchResults(configuration){
     //Remove Url////////////////////////////////////////////////////////
     if(configuration.removeUrl){
         //Remove url and icon.
-        removeElements(".TbwUpd", 0);
+        removeElements(".byrV5b", 0);
         //Remove url and icon on the litle pages thingy that appears.
         removeElements(".qdrjAc", 0);
 
@@ -280,6 +282,7 @@ function modifySearchResults(configuration){
     if(configuration.newsWidget){
         removeElements(".AHFbof", 4); //Class not always present in news widget.
         removeElements(".aUSklf", 4);
+        removeElements(".yG4QQe", 2);
 
         removePaddingBeforeWidget(".AHFbof", 4); //Class not always present in news widget.
         removePaddingBeforeWidget(".aUSklf", 4);
@@ -308,9 +311,9 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.youtubeWidtget){ 
-        removeElements(".uVMCKf", 2);
+        removeElements(".uVMCKf", 0);
 
-        removePaddingBeforeWidget(".uVMCKf", 2);
+        //removePaddingBeforeWidget(".uVMCKf", 2);
     }
 
     if(configuration.sideBarWidget){
@@ -334,6 +337,11 @@ function modifySearchResults(configuration){
         
         removeElements(".NfrtPd.UE0K3b.QsV5nc", 7);
         removePaddingBeforeWidget(".NfrtPd.UE0K3b.QsV5nc", 7);
+    }
+
+    if(configuration.thingsToKnowWidget){
+        //dnXCYb CC4Ctb dhks6d
+        removeElements(".dnXCYb", 5);
     }
 
     if(configuration.imagesWidget){

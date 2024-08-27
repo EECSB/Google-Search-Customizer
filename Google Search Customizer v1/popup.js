@@ -19,6 +19,7 @@ window.addEventListener('load', (event) => {
         "images": false,
         "mapsFindResultsOnWidget": false,
         "thingsToDoWidget": false,
+        "thingsToKnowWidget": false,
         "imagesWidget": false,
         "featuredSnippet": false,
         "dictionaryWidget": false,
@@ -26,7 +27,8 @@ window.addEventListener('load', (event) => {
         "topSightsWidget": false,
         "otherMessages": false,
         "siteFavicons": false,
-        "videoTumbnails": false
+        "videoTumbnails": false,
+        "theme": "light"
     };
     //Initialization////////////////////////////////////////////////////
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -49,117 +51,142 @@ window.addEventListener('load', (event) => {
     ////////////////////////////////////////////////////////////////////
 
     //Events////////////////////////////////////////////////////////////
-
-    //Checkbox events//////////////////////
     
-    document.getElementById("removeUrlCheckBox").addEventListener("change", event =>{
-        changeConfig("removeUrl", event.target.checked);
-    });
-
-    document.getElementById("removeArrowCheckBox").addEventListener("change", event =>{
-        changeConfig("removeArrow", event.target.checked);
-    });
-
-    document.getElementById("moveCheckBox").addEventListener("change", event =>{
-        changeConfig("moveUrl", event.target.checked);
-    });
-
-    document.getElementById("colorUrlCheckBox").addEventListener("change", event =>{
-        changeConfig("colorUrl", event.target.checked);
-    });
-
-    document.getElementById("searchWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("searchWidget",event.target.checked);
-    });
-
-    document.getElementById("askWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("askWidget",event.target.checked);
-    });
-
-    document.getElementById("twitterWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("twitterWidget",event.target.checked);
-    });
-
-    document.getElementById("newsWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("newsWidget",event.target.checked);
-    });
-
-    document.getElementById("mapsWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("mapsWidget",event.target.checked);
-    });
-
-    document.getElementById("sideBarWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("sideBarWidget",event.target.checked);
-    });
-
-    document.getElementById("ratingsWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("ratingsWidget",event.target.checked);
-    });
-
-    document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
-        changeConfig("removeEmojis", event.target.checked);
-    });
-
-    document.getElementById("youtubeWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("youtubeWidtget", event.target.checked);
-    });
-
-    document.getElementById("imagesCheckBox").addEventListener("change", event =>{
-        changeConfig("images", event.target.checked);
-    });
-
-    document.getElementById("mapsFindResultsOnWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("mapsFindResultsOnWidget", event.target.checked);
-    });
-
-    document.getElementById("thingsToDoWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("thingsToDoWidget", event.target.checked);
-    });
-
-    document.getElementById("imagesWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("imagesWidget", event.target.checked);
-    });
-
-    document.getElementById("featuredSnippetCheckBox").addEventListener("change", event =>{
-        changeConfig("featuredSnippet", event.target.checked);
-    });
-
-    document.getElementById("dictionaryWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("dictionaryWidget", event.target.checked);
-    });
-
-    document.getElementById("businessesWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("businessesWidget", event.target.checked);
-    });
-
-    document.getElementById("topSightsWidgetCheckBox").addEventListener("change", event =>{
-        changeConfig("topSightsWidget", event.target.checked);
-    });
-
-    document.getElementById("otherMessagesCheckBox").addEventListener("change", event =>{
-        changeConfig("otherMessages", event.target.checked);
-    });  
-
-    document.getElementById("siteFaviconsCheckBox").addEventListener("change", event =>{
-        changeConfig("siteFavicons", event.target.checked);
-    });
+        //UI Events////////////////////////////////////////////////////////////////
     
-    document.getElementById("videoTumbnailsCheckBox").addEventListener("change", event =>{
-        changeConfig("videoTumbnails", event.target.checked);
-    });
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
 
-    //Color Selection /////
-    document.getElementById("adBackgroundColorSelection").addEventListener("input", event =>{
-        changeConfig("adBackgroundColor", event.target.value);
-    });
-
-    document.getElementById("urlColorSelection").addEventListener("input", event =>{
-        changeConfig("urlColor", event.target.value);
-    });
+            if (body.classList.contains('dark-mode'))
+                changeConfig("theme", "dark");
+            else
+                changeConfig("theme", "light");
+        });
     
-    //Button///////////////
-    document.getElementById("defaultSettings").addEventListener("click", restoreDefaultConfig);
+        ///////////////////////////////////////////////////////////////////////////
 
+        //Checkbox events//////////////////////////////////////////////////////////
+        
+        document.getElementById("removeUrlCheckBox").addEventListener("change", event =>{
+            changeConfig("removeUrl", event.target.checked);
+        });
+
+        document.getElementById("removeArrowCheckBox").addEventListener("change", event =>{
+            changeConfig("removeArrow", event.target.checked);
+        });
+
+        document.getElementById("moveCheckBox").addEventListener("change", event =>{
+            changeConfig("moveUrl", event.target.checked);
+        });
+
+        document.getElementById("colorUrlCheckBox").addEventListener("change", event =>{
+            changeConfig("colorUrl", event.target.checked);
+        });
+
+        document.getElementById("searchWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("searchWidget",event.target.checked);
+        });
+
+        document.getElementById("askWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("askWidget",event.target.checked);
+        });
+
+        document.getElementById("twitterWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("twitterWidget",event.target.checked);
+        });
+
+        document.getElementById("newsWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("newsWidget",event.target.checked);
+        });
+
+        document.getElementById("mapsWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("mapsWidget",event.target.checked);
+        });
+
+        document.getElementById("sideBarWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("sideBarWidget",event.target.checked);
+        });
+
+        document.getElementById("ratingsWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("ratingsWidget",event.target.checked);
+        });
+
+        document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
+            changeConfig("removeEmojis", event.target.checked);
+        });
+
+        document.getElementById("youtubeWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("youtubeWidtget", event.target.checked);
+        });
+
+        document.getElementById("imagesCheckBox").addEventListener("change", event =>{
+            changeConfig("images", event.target.checked);
+        });
+
+        document.getElementById("mapsFindResultsOnWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("mapsFindResultsOnWidget", event.target.checked);
+        });
+
+        document.getElementById("thingsToDoWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("thingsToDoWidget", event.target.checked);
+        });
+
+        document.getElementById("thingsToKnowWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("thingsToKnowWidget", event.target.checked);
+        });
+
+        document.getElementById("imagesWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("imagesWidget", event.target.checked);
+        });
+
+        document.getElementById("featuredSnippetCheckBox").addEventListener("change", event =>{
+            changeConfig("featuredSnippet", event.target.checked);
+        });
+
+        document.getElementById("dictionaryWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("dictionaryWidget", event.target.checked);
+        });
+
+        document.getElementById("businessesWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("businessesWidget", event.target.checked);
+        });
+
+        document.getElementById("topSightsWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("topSightsWidget", event.target.checked);
+        });
+
+        document.getElementById("otherMessagesCheckBox").addEventListener("change", event =>{
+            changeConfig("otherMessages", event.target.checked);
+        });  
+
+        document.getElementById("siteFaviconsCheckBox").addEventListener("change", event =>{
+            changeConfig("siteFavicons", event.target.checked);
+        });
+        
+        document.getElementById("videoTumbnailsCheckBox").addEventListener("change", event =>{
+            changeConfig("videoTumbnails", event.target.checked);
+        });
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        //Other////////////////////////////////////////////////////////////////////
+
+        //Color Selection /////
+        document.getElementById("adBackgroundColorSelection").addEventListener("input", event =>{
+            changeConfig("adBackgroundColor", event.target.value);
+        });
+
+        document.getElementById("urlColorSelection").addEventListener("input", event =>{
+            changeConfig("urlColor", event.target.value);
+        });
+    
+        //Button///////////////
+        document.getElementById("defaultSettings").addEventListener("click", restoreDefaultConfig);
+        
+        ///////////////////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////////////////
 
     function restoreDefaultConfig(){
         const defaultConfiguration = {
@@ -183,6 +210,7 @@ window.addEventListener('load', (event) => {
                 "images": false,
                 "mapsFindResultsOnWidget": false,
                 "thingsToDoWidget": false,
+                "thingsToKnowWidget": false,
                 "imagesWidget": false,
                 "featuredSnippet": false,
                 "dictionaryWidget": false,
@@ -190,7 +218,8 @@ window.addEventListener('load', (event) => {
                 "topSightsWidget": false,
                 "otherMessages": false,
                 "siteFavicons": false,
-                "videoTumbnails": false
+                "videoTumbnails": false,
+                "theme": "light"
             }
         }
 
@@ -239,6 +268,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("imagesCheckBox").checked = configuration.images;
         document.getElementById("mapsFindResultsOnWidgetCheckBox").checked = configuration.mapsFindResultsOnWidget;
         document.getElementById("thingsToDoWidgetCheckBox").checked = configuration.thingsToDoWidget;
+        document.getElementById("thingsToKnowWidgetCheckBox").checked = configuration.thingsToKnowWidget;
         document.getElementById("imagesWidgetCheckBox").checked = configuration.imagesWidget;
         document.getElementById("featuredSnippetCheckBox").checked = configuration.featuredSnippet;
         document.getElementById("dictionaryWidgetCheckBox").checked = configuration.dictionaryWidget;
@@ -250,6 +280,10 @@ window.addEventListener('load', (event) => {
 
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;
+        
+        //Set theme.
+        if (configuration["theme"] == "dark")
+            document.body.classList.add('dark-mode');
 
         var classname = document.getElementsByClassName("adsDisplay");
 
