@@ -8,6 +8,14 @@ You can add the extension to your browser by downloading it from the official ex
 
 The extension can also be installed manually like so: Download the files from Github -> In chrome open: Extensions -> Manage Extensions -> Load Unpacked and select the folder with the downloaded files.
 
+## Important Note For Firefox and Opera users:
+
+[Issue 27](https://github.com/EECSB/Google-Search-Customizer/issues/27) In Firefox, the extension has to be manually enabled after the installation like so:
+![enter image description here](https://eecs.blog/wp-content/uploads/2024/08/enable-google-search-customizer-extension-in-firefox.png)
+
+[Issue 24](https://github.com/EECSB/Google-Search-Customizer/issues/24) In Opera, the extension has to be manually enabled after the installation like so:
+![enter image description here](https://eecs.blog/wp-content/uploads/2024/08/enable-google-search-customizer-extension-in-opera.png)
+
 ## What does this extension do?
 
 This extension allows you to customize how your Google Search results are displayed. You can:
@@ -23,11 +31,11 @@ This is the extension settings menu where you can select how your search results
 ![enter image description here](https://eecs.blog/wp-content/uploads/2020/10/UI.png)
 
 
-This demonstrates what the controls under **URL Position and Apperance** do. Remove the url(**remove url**), remove arrow after the irl(**remove arrow after url**), color the url green(**color url**), move the url bellow the title(**move url**). 
+This demonstrates what the controls under **URL Position and Appearance** do. Remove the url(**remove url**), remove arrow after the url(**remove arrow after url**), color the url green(**color url**), move the url below the title(**move url**). 
 ![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/url-settings.png)
 
 
-This demonstrates what the controls under **Ad Settings** do. You can keep the ads the way they are(**normal**), remove them(**remove**), make them stand out a bit more by putting a green ad marker before the url(**stand out**), do what the stand out option does and also color the background of the ads(**really stand out**).
+This demonstrates what the controls under **Ad Settings** do. You can keep the ads the way they are(**normal**), remove them(**remove**), make them stand out a bit more by putting a green ad marker before the url(**stand out**), do what the standout option does and also color the background of the ads(**really stand out**).
 ![enter image description here](https://eecs.blog/wp-content/uploads/2020/09/ad-settings.png)
 
 
