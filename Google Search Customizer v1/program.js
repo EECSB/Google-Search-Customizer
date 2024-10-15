@@ -345,10 +345,10 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.imagesWidget){
-        removeElements("#iur", 4);
+        removeElements("#iur", 3);
         removeElements(".hisnlb", 8); 
         
-        removePaddingBeforeWidget("#iur", 4); 
+        removePaddingBeforeWidget("#iur", 3); 
     }
 
     if(configuration.featuredSnippet){
