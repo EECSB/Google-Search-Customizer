@@ -168,6 +168,18 @@ window.addEventListener('load', (event) => {
             changeConfig("videoTumbnails", event.target.checked);
         });
 
+        document.getElementById("aboutWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("aboutWidget", event.target.checked);
+        });
+
+        document.getElementById("popularExploreBuyWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("popularExploreBuyWidget", event.target.checked);
+        });
+
+
+        
+        
+
         ///////////////////////////////////////////////////////////////////////////
 
         //Other////////////////////////////////////////////////////////////////////
@@ -219,6 +231,8 @@ window.addEventListener('load', (event) => {
                 "otherMessages": false,
                 "siteFavicons": false,
                 "videoTumbnails": false,
+                "aboutWidget": false,
+                "popularExploreBuyWidget": false,
                 "theme": "light"
             }
         }
@@ -274,6 +288,8 @@ window.addEventListener('load', (event) => {
         document.getElementById("otherMessagesCheckBox").checked = configuration.otherMessages;
         document.getElementById("siteFaviconsCheckBox").checked = configuration.siteFavicons;
         document.getElementById("videoTumbnailsCheckBox").checked = configuration.videoTumbnails;
+        document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
+        document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
 
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;

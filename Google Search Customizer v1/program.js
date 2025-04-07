@@ -51,6 +51,8 @@ if(checkIfRun()){
         "otherMessages": false,
         "siteFavicons": false,
         "videoTumbnails": false,
+        "aboutWidget": false,
+        "popularExploreBuyWidget": false,
         "theme": "light"
     };
 
@@ -201,7 +203,7 @@ function modifySearchResults(configuration){
         const elements = document.querySelectorAll('h3.LC20lb');
         for(element of elements){
             element.style.marginTop = '0';
-            element.style.marginBottom = element.nextSibling.clientHeight + "px"; //Same as the height of the url div
+            element.style.marginBottom = '0'; //element.nextSibling.clientHeight + "px"; //Same as the height of the url div
 
             element.nextSibling.style.marginTop = /*element.clientHeight*/50 + "px"; //Same as height of the h3 element before it.
         }
@@ -226,10 +228,17 @@ function modifySearchResults(configuration){
         }
         
         //Decrease vertical spacing between results.
-        const searchResults = document.querySelectorAll('.d8lRkd');
+        const searchResults = document.querySelectorAll('.wHYlTd'); //wHYlTd Ww4FFb vt6azd tF2Cxc asEBEc
         for(result of searchResults){
             result.style.marginBottom = '0';
         }
+        
+        const searchResults2 = document.querySelectorAll('.JCZQSb');
+        for(result of searchResults2){
+            result.parentNode.parentNode.style.marginTop = '0';
+            result.parentNode.parentNode.style.marginBottom = '0';
+        }
+        
 
         //If top ads are present move up search results to reduce the gap.
         //Disable this as in come cases the search results will go over the top bar.
@@ -312,7 +321,8 @@ function modifySearchResults(configuration){
 
     if(configuration.youtubeWidtget){ 
         removeElements(".uVMCKf", 0);
-
+        removeElements(".PYmpec", 4);
+        
         //removePaddingBeforeWidget(".uVMCKf", 2);
     }
 
@@ -341,7 +351,7 @@ function modifySearchResults(configuration){
 
     if(configuration.thingsToKnowWidget){
         //dnXCYb CC4Ctb dhks6d
-        removeElements(".dnXCYb", 5);
+        removeElements(".dnXCYb", 6);
     }
 
     if(configuration.imagesWidget){
@@ -385,10 +395,37 @@ function modifySearchResults(configuration){
         removeElements(".DDKf1c", 0);
     }
 
+    if(configuration.aboutWidget){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
+        removeElements(".bzXtMb", 0);
+        removeElements(".yTFeqb.wp-ms.oJxARb.nBWfrd.VE2Ztc", 3);
+        removeElements(".GJi8Lc", 6);
+    }
+
+    
+    if(configuration.popularExploreBuyWidget){
+        removeElements(".ednlu.GAJC", 8);//removeElements(".aJegcc", 1);
+        removeElements(".OTMJR.IFnjPb.SlP8xc.RES9jf", 4);
+        
+        //Determmine if we are in the shopping tab.
+        const searchForm = document.getElementById("searchform");
+        if (searchForm) {
+            let isShoppingTab = false;
+            const links = searchForm.getElementsByTagName("a");
+            for (let link of links) {
+                if (link.href.includes("/shopping?sca_esv")) {
+                    isShoppingTab = true;
+                }
+            }
+
+            if(!isShoppingTab)
+                removeElements("#sho-qu__spinnerContainer", 8);
+        }
+    }
 
 
     //Images next to/in some search results
     if(configuration.images){
+        removeElements(".LnCrMe", 0);
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
         removeElements(".SuXxEf", 0);
