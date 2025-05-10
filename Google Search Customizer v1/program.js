@@ -197,6 +197,7 @@ function modifySearchResults(configuration){
         //    document.getElementById("center_col").style.top = "-80px";
     }
     
+    /*
     //Move Url////////////////////////////////////////////////////////////////
     if(configuration.moveUrl){
         //Push url and favicon under title.
@@ -205,7 +206,7 @@ function modifySearchResults(configuration){
             element.style.marginTop = '0';
             element.style.marginBottom = '0'; //element.nextSibling.clientHeight + "px"; //Same as the height of the url div
 
-            element.nextSibling.style.marginTop = /*element.clientHeight*/50 + "px"; //Same as height of the h3 element before it.
+            element.nextSibling.style.marginTop = 50 + "px"; //Same as height of the h3 element before it. //element.clientHeight
         }
 
         //Decrease vertical spacing between results.
@@ -245,6 +246,7 @@ function modifySearchResults(configuration){
         //if(document.getElementById("tads") != null)
         //   document.getElementById("center_col").style.top = "-80px";
     }
+    */
 
 
     
@@ -252,10 +254,14 @@ function modifySearchResults(configuration){
     //Remove Widgets///////////////////////////////////////////
 
     if(configuration.adsDisplay == "remove"){
-        removeElements(".IhvZRb", 2); //Ads in side bar widget
-        removeElements(".T98FId", 2); //Ads in search results(as widget or "Popular products widget")
-
-        removePaddingBeforeWidget(".T98FId", 2);
+        //Don't apply this if the shopping tab is selected.
+        if(!window.location.href.includes("sclient=gws-wiz-modeless-shopping")) 
+        {
+            removeElements(".IhvZRb", 2); //Ads in side bar widget
+            removeElements(".T98FId", 2); //Ads in search results(as widget or "Popular products widget")
+    
+            removePaddingBeforeWidget(".T98FId", 2);
+        }
     }
     
 
@@ -266,7 +272,6 @@ function modifySearchResults(configuration){
         removeElements(".YR2tRd", 2);
         
         removeElements(".O8VmIc", 2); //Search widget in image search.
-
     }
 
     if(configuration.askWidget){

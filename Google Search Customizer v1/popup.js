@@ -76,9 +76,9 @@ window.addEventListener('load', (event) => {
             changeConfig("removeArrow", event.target.checked);
         });
 
-        document.getElementById("moveCheckBox").addEventListener("change", event =>{
-            changeConfig("moveUrl", event.target.checked);
-        });
+        //document.getElementById("moveCheckBox").addEventListener("change", event =>{
+        //    changeConfig("moveUrl", event.target.checked);
+        //});
 
         document.getElementById("colorUrlCheckBox").addEventListener("change", event =>{
             changeConfig("colorUrl", event.target.checked);
@@ -264,7 +264,7 @@ window.addEventListener('load', (event) => {
     function setUI(configuration){
         document.getElementById("removeUrlCheckBox").checked = configuration.removeUrl;
         document.getElementById("removeArrowCheckBox").checked = configuration.removeArrow;
-        document.getElementById("moveCheckBox").checked = configuration.moveUrl;
+        //document.getElementById("moveCheckBox").checked = configuration.moveUrl;
         document.getElementById("colorUrlCheckBox").checked = configuration.colorUrl;
         document.getElementById("removeEmojisCheckBox").checked = configuration.removeEmojis;
 
