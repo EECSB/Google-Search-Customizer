@@ -254,8 +254,10 @@ function modifySearchResults(configuration){
     //Remove Widgets///////////////////////////////////////////
 
     if(configuration.adsDisplay == "remove"){
-        //Don't apply this if the shopping tab is selected.
-        if(!window.location.href.includes("sclient=gws-wiz-modeless-shopping")) 
+        //Don't apply this if the shopping tab is selected. 
+        //sclient=gws-wiz-modeless-shopping seems to only be present in the shopping tab. However it's not present when you first switch from the search tab to the shopping tab, only when subsequent searches are done in the shopping tab.
+        //udm=28 seems to be the parameter that selects the shopping tab. For example, if udm=15 is used the "Things to do" tab will be selected.
+        if(!window.location.href.includes("sclient=gws-wiz-modeless-shopping") && !window.location.href.includes("udm=28"))
         {
             removeElements(".IhvZRb", 2); //Ads in side bar widget
             removeElements(".T98FId", 2); //Ads in search results(as widget or "Popular products widget")
