@@ -28,6 +28,7 @@ window.addEventListener('load', (event) => {
         "otherMessages": false,
         "siteFavicons": false,
         "videoTumbnails": false,
+        "aiModeTab": false,
         "theme": "light"
     };
     //Initialization////////////////////////////////////////////////////
@@ -168,6 +169,10 @@ window.addEventListener('load', (event) => {
             changeConfig("videoTumbnails", event.target.checked);
         });
 
+        document.getElementById("aiModeTabCheckBox").addEventListener("change", event =>{
+            changeConfig("aiModeTab", event.target.checked);
+        });
+
         document.getElementById("aboutWidgetCheckBox").addEventListener("change", event =>{
             changeConfig("aboutWidget", event.target.checked);
         });
@@ -231,6 +236,7 @@ window.addEventListener('load', (event) => {
                 "otherMessages": false,
                 "siteFavicons": false,
                 "videoTumbnails": false,
+                "aiModeTab": false,
                 "aboutWidget": false,
                 "popularExploreBuyWidget": false,
                 "theme": "light"
@@ -288,6 +294,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("otherMessagesCheckBox").checked = configuration.otherMessages;
         document.getElementById("siteFaviconsCheckBox").checked = configuration.siteFavicons;
         document.getElementById("videoTumbnailsCheckBox").checked = configuration.videoTumbnails;
+        document.getElementById("aiModeTabCheckBox").checked = configuration.aiModeTab;
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
 

@@ -459,6 +459,11 @@ function modifySearchResults(configuration){
     if(configuration.videoTumbnails){
         removeElements(".gY2b2c", 0);
     }
+
+    //Remove Ai Mode tab
+    if(configuration.aiModeTab){
+        removeElements(".olrp5b", 2);
+    }
     
     //Color Url////////////////////////////////////////////////////////////////
     if(configuration.colorUrl){
