@@ -53,7 +53,10 @@ if(checkIfRun()){
         "videoTumbnails": false,
         "aboutWidget": false,
         "popularExploreBuyWidget": false,
-        "theme": "light"
+        "theme": "light",
+        "aiModeTab": false,
+        "relatedProductsServicesWidget": false,
+        "placesToVisitWidget": false
     };
 
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -357,8 +360,7 @@ function modifySearchResults(configuration){
     }
 
     if(configuration.thingsToKnowWidget){
-        //dnXCYb CC4Ctb dhks6d
-        removeElements(".dnXCYb", 6);
+        removeElements(".dnXCYb", 7);
     }
 
     if(configuration.imagesWidget){
@@ -427,6 +429,15 @@ function modifySearchResults(configuration){
             if(!isShoppingTab)
                 removeElements("#sho-qu__spinnerContainer", 8);
         }
+    }
+
+
+    if(configuration.relatedProductsServicesWidget){
+        removeElements("#HbKV2c", 0);
+    }
+
+    if(configuration.placesToVisitWidget){
+        removeElements(".J1FGbf", 16);
     }
 
 

@@ -29,7 +29,10 @@ window.addEventListener('load', (event) => {
         "siteFavicons": false,
         "videoTumbnails": false,
         "aiModeTab": false,
-        "theme": "light"
+        "theme": "light",
+        "relatedProductsServicesWidget": false,
+        "placesToVisitWidget": false
+
     };
     //Initialization////////////////////////////////////////////////////
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
@@ -181,9 +184,13 @@ window.addEventListener('load', (event) => {
             changeConfig("popularExploreBuyWidget", event.target.checked);
         });
 
-
+        document.getElementById("relatedProductsServicesWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("relatedProductsServicesWidget", event.target.checked);
+        });
         
-        
+        document.getElementById("placesToVisitWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("placesToVisitWidget", event.target.checked);
+        });
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -239,7 +246,9 @@ window.addEventListener('load', (event) => {
                 "aiModeTab": false,
                 "aboutWidget": false,
                 "popularExploreBuyWidget": false,
-                "theme": "light"
+                "theme": "light",
+                "relatedProductsServicesWidget": false,
+                "placesToVisitWidget": false
             }
         }
 
@@ -297,7 +306,9 @@ window.addEventListener('load', (event) => {
         document.getElementById("aiModeTabCheckBox").checked = configuration.aiModeTab;
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
-
+        document.getElementById("relatedProductsServicesWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
+        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
+        
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;
         
