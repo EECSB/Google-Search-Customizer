@@ -177,11 +177,16 @@ function modifySearchResults(configuration){
 
             //Color ads if any are present.
             if(adElements != undefined){
-                for(adElement of adElements){
+                for (let adElement of adElements){
                     if(adElement.innerHTML != ""){
                         //Color ads.
                         adElement.style.backgroundColor = configuration.adBackgroundColor;
                         adElement.style.padding = "10px";
+
+                        //Apply background color to every child element
+                        const childElements = adElement.querySelectorAll('*');
+                        for (let child of childElements)
+                            child.style.backgroundColor = configuration.adBackgroundColor;
                     }
                 }
             }
@@ -373,6 +378,9 @@ function modifySearchResults(configuration){
     if(configuration.featuredSnippet){
         removeElements("#Odp5De", 0);
         removeElements(".yKMVIe", 10);
+        
+        //AI Overview
+        removeElements(".Wm5I1e", 0);
     }
     
     if(configuration.dictionaryWidget){
