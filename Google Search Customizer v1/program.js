@@ -381,6 +381,7 @@ function modifySearchResults(configuration){
         
         //AI Overview
         removeElements(".Wm5I1e", 0);
+        removeElements(".YzCcne", 0);
     }
     
     if(configuration.dictionaryWidget){
@@ -416,6 +417,9 @@ function modifySearchResults(configuration){
         removeElements(".bzXtMb", 0);
         removeElements(".yTFeqb.wp-ms.oJxARb.nBWfrd.VE2Ztc", 3);
         removeElements(".GJi8Lc", 6);
+
+        //Stuff like conversion tables, etc...
+        removeElements(".dG2XIf", 5);
     }
 
     
