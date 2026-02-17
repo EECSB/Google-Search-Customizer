@@ -419,7 +419,7 @@ function modifySearchResults(configuration){
         removeElements(".GJi8Lc", 6);
 
         //Stuff like conversion tables, etc...
-        removeElements(".dG2XIf", 5);
+        removeElements(".dG2XIf", 3);
     }
 
     
