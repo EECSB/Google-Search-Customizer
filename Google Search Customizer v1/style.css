@@ -15,12 +15,24 @@ body {
     margin-bottom: 5px;
 }
 
+/* Every control has a <label> bound to it now, so the caption is part of the hit area
+   rather than dead text beside a 13px box. */
+label{
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.checkbox, .adsDisplay{
+    cursor: pointer;
+    vertical-align: middle;
+}
+
 .controlsWrapper{
     margin-left: 10px;
     margin-bottom: 10px;
 }
 
-#adTitle{
+.sectionTitle{
     margin: 0;
 }
 
@@ -34,57 +46,9 @@ a{
 }
 
 #message{
-    color: red;
+    color: #b00020;
     font-size: 13px;
 }
-
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
-  
-  /* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-  
-    /* Position the tooltip text */
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-  
-    /* Fade in tooltip */
-    opacity: 0;
-    transition: opacity 1s;
-
-    top: 5px;
-    left: 250%;
-  }
-
-  /* Tooltip arrow */
-  .tooltip .tooltiptext::after {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    right: 100%; /* To the left of the tooltip */
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent black transparent transparent;
-  }
-  
-  /* Show the tooltip text when you mouse over the tooltip container */
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
 
 .link{
     font-size: 13px;
@@ -102,14 +66,15 @@ a{
     padding: 0;
     height: 20px;
     width: 30px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 /******** Dark mode styling ********/
 
 #darkModeButtonWrapper{
-    display: inline-block; 
-    margin-left: 20px; 
-    border: 2px solid white;
+    display: inline-block;
+    margin-left: 20px;
 }
 
 /* Light Mode (default) */
@@ -128,6 +93,25 @@ body.dark-mode {
     color: #e0e0e0;
 }
 
+/* The default red is close to unreadable on #121212. */
+.dark-mode #message {
+    color: #ff8a80;
+}
+
+.dark-mode a {
+    color: #8ab4f8;
+}
+
+.dark-mode a:visited {
+    color: #c58af9;
+}
+
+.dark-mode #defaultSettings {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
 /* Button styles */
 .dark-mode-toggle {
     padding: 5px 10px;
@@ -135,6 +119,11 @@ body.dark-mode {
     color: #fff;
     border: none;
     cursor: pointer;
+}
+
+.dark-mode .dark-mode-toggle {
+    background-color: #e0e0e0;
+    color: #000;
 }
 
 /***********************************/

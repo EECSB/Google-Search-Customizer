@@ -1,56 +1,22 @@
-window.addEventListener('load', (event) => {
-    let configuration = {
-        "removeUrl" : false,
-        "removeArrow" : false,
-        "moveUrl": false,
-        "colorUrl": false,
-        "adsDisplay" : "normal", //"remove", "standOut1", "standOut2"
-        "searchWidget": false,
-        "askWidget": false,
-        "twitterWidget": false,
-        "newsWidget": false,
-        "mapsWidget": false,
-        "sideBarWidget": false,
-        "ratingsWidget": false,
-        "urlColor" : "#008000",
-        "adBackgroundColor" : "#faebd7",
-        "removeEmojis": false,
-        "youtubeWidtget": false,
-        "images": false,
-        "mapsFindResultsOnWidget": false,
-        "thingsToDoWidget": false,
-        "thingsToKnowWidget": false,
-        "imagesWidget": false,
-        "featuredSnippet": false,
-        "dictionaryWidget": false,
-        "businessesWidget": false,
-        "topSightsWidget": false,
-        "otherMessages": false,
-        "siteFavicons": false,
-        "videoTumbnails": false,
-        "aiModeTab": false,
-        "theme": "light",
-        "relatedProductsServicesWidget": false,
-        "placesToVisitWidget": false
+whenPopupReady(() => {
+    //The configuration is held here for as long as the popup is open. The popup is the only
+    //thing writing it while it is open, so there is no need to re-read storage before every
+    //change - which is what it used to do, doubling the API traffic for no benefit.
+    let configuration = applyConfigurationDefaults(null);
 
-    };
     //Initialization////////////////////////////////////////////////////
+    //The defaults come from defaults.js, which popup.html loads ahead of this file, so the
+    //popup and the content script cannot disagree about them.
     chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-        if ('configuration' in storedConfiguration) { // if there is a stored configuration already
-            storeConfig(storedConfiguration);
-        }
-        else { // if there is no stored configuration yet = extension hasn't been used yet
+        configuration = applyConfigurationDefaults(storedConfiguration["configuration"]);
+
+        //Write back on a cold start, and also when the saved configuration predates
+        //settings that have been added since - otherwise those settings stay missing.
+        if(configurationNeedsUpgrade(storedConfiguration["configuration"]))
             chrome.storage.sync.set({'configuration': configuration}, function(){});
-            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-                storeConfig(storedConfiguration);
-            });
-        }
+
+        setUI(configuration);
     });
-    // set configuration object to the saved one and set UI
-    function storeConfig(storedConfiguration) {
-        configuration = storedConfiguration;
-        setUI(configuration["configuration"]);
-    }
 
     ////////////////////////////////////////////////////////////////////
 
@@ -118,6 +84,7 @@ window.addEventListener('load', (event) => {
 
         document.getElementById("removeEmojisCheckBox").addEventListener("change", event =>{
             changeConfig("removeEmojis", event.target.checked);
+            setRefreshNoticeVisible(event.target.checked);
         });
 
         document.getElementById("youtubeWidgetCheckBox").addEventListener("change", event =>{
@@ -197,13 +164,17 @@ window.addEventListener('load', (event) => {
         //Other////////////////////////////////////////////////////////////////////
 
         //Color Selection /////
-        document.getElementById("adBackgroundColorSelection").addEventListener("input", event =>{
-            changeConfig("adBackgroundColor", event.target.value);
-        });
-
-        document.getElementById("urlColorSelection").addEventListener("input", event =>{
-            changeConfig("urlColor", event.target.value);
-        });
+        //
+        //A colour picker fires "input" continuously while it is dragged and "change" once,
+        //when it closes. Both used to write to chrome.storage.sync, which is rate limited to
+        //roughly 120 writes a minute - a few seconds of dragging blew through the quota and
+        //the remaining writes were rejected silently, so the chosen colour did not stick.
+        //
+        //Dragging now only previews: the new colour goes straight to the page, which costs
+        //nothing because the content script just rewrites a couple of CSS rules. The value is
+        //saved once, when the picker closes.
+        previewAndCommit("adBackgroundColorSelection", "adBackgroundColor");
+        previewAndCommit("urlColorSelection", "urlColor");
     
         //Button///////////////
         document.getElementById("defaultSettings").addEventListener("click", restoreDefaultConfig);
@@ -212,51 +183,30 @@ window.addEventListener('load', (event) => {
     
     ///////////////////////////////////////////////////////////////////////////
 
+    //Wires a colour input so that dragging previews and releasing saves.
+    function previewAndCommit(elementId, key){
+        const picker = document.getElementById(elementId);
+
+        picker.addEventListener("input", event =>{
+            configuration[key] = event.target.value;
+            sendToProgramJS({ "configuration": configuration });
+        });
+
+        picker.addEventListener("change", event =>{
+            changeConfig(key, event.target.value);
+        });
+    }
+
     function restoreDefaultConfig(){
-        const defaultConfiguration = {
-            "configuration":{
-                "removeUrl": false,
-                "removeArrow": false,
-                "moveUrl": false,
-                "colorUrl": false,
-                "adsDisplay": "normal", //"remove", "standOut1", "standOut2"
-                "searchWidget": false,
-                "askWidget": false,
-                "twitterWidget": false,
-                "newsWidget": false,
-                "mapsWidget": false,
-                "sideBarWidget": false,
-                "ratingsWidget": false,
-                "urlColor": "#008000",
-                "adBackgroundColor": "#faebd7",
-                "removeEmojis": false,
-                "youtubeWidtget": false,
-                "images": false,
-                "mapsFindResultsOnWidget": false,
-                "thingsToDoWidget": false,
-                "thingsToKnowWidget": false,
-                "imagesWidget": false,
-                "featuredSnippet": false,
-                "dictionaryWidget": false,
-                "businessesWidget": false,
-                "topSightsWidget": false,
-                "otherMessages": false,
-                "siteFavicons": false,
-                "videoTumbnails": false,
-                "aiModeTab": false,
-                "aboutWidget": false,
-                "popularExploreBuyWidget": false,
-                "theme": "light",
-                "relatedProductsServicesWidget": false,
-                "placesToVisitWidget": false
-            }
-        }
+        //applyConfigurationDefaults with nothing to merge in gives a plain, mutable copy of
+        //the defaults. DEFAULT_CONFIGURATION itself is frozen and shared, so it must not be
+        //handed out directly.
+        configuration = applyConfigurationDefaults(null);
 
-        sendToProgramJS(defaultConfiguration);
+        sendToProgramJS({ "configuration": configuration });
+        setUI(configuration);
 
-        setUI(defaultConfiguration["configuration"]);
-
-        chrome.storage.sync.set({'configuration': defaultConfiguration["configuration"]}, function(){});
+        chrome.storage.sync.set({'configuration': configuration}, function(){});
     }
 
     ///////////////////////
@@ -282,6 +232,7 @@ window.addEventListener('load', (event) => {
         //document.getElementById("moveCheckBox").checked = configuration.moveUrl;
         document.getElementById("colorUrlCheckBox").checked = configuration.colorUrl;
         document.getElementById("removeEmojisCheckBox").checked = configuration.removeEmojis;
+        setRefreshNoticeVisible(configuration.removeEmojis);
 
         document.getElementById("searchWidgetCheckBox").checked = configuration.searchWidget;
         document.getElementById("askWidgetCheckBox").checked = configuration.askWidget;
@@ -307,7 +258,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
         document.getElementById("relatedProductsServicesWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
-        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
+        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.placesToVisitWidget;
         
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;
@@ -325,21 +276,69 @@ window.addEventListener('load', (event) => {
         }
     }
 
-    function changeConfig(key, value){
-        chrome.storage.sync.get(['configuration'], function(configuration) { 
-            configuration["configuration"][key] = value;
-
-            chrome.storage.sync.set({'configuration': configuration["configuration"]}, function(){});
-
-            sendToProgramJS(configuration);
-        });
+    //Every setting now takes effect on the open search page as soon as it is changed, and
+    //takes effect in reverse when it is switched off - the content script drives them from a
+    //stylesheet rather than by writing display:none onto elements.
+    //
+    //Remove Emojis is the exception. Switching it on works immediately, but it rewrites the
+    //text of the results, so switching it off cannot put the deleted characters back without
+    //a reload. The notice is shown only while that setting is on.
+    function setRefreshNoticeVisible(visible){
+        document.getElementById("message").hidden = !visible;
     }
 
+    //Saves one setting and pushes the result to the open search pages.
+    //
+    //Writes straight from the copy held above rather than re-reading storage first. The
+    //popup is the only writer while it is open, so the read was pure overhead - and it is
+    //what made the colour picker's write rate twice as expensive as it needed to be.
+    function changeConfig(key, value){
+        configuration[key] = value;
+
+        chrome.storage.sync.set({'configuration': configuration}, function(){});
+
+        sendToProgramJS({ "configuration": configuration });
+    }
+
+    //Sends a configuration to every tab that has the content script in it.
+    //
+    //This used to target only the active tab in the current window, so with several search
+    //pages open the rest kept the old appearance until they were reloaded. It also read
+    //tabs[0].id without checking - on a chrome:// page, the New Tab page, or the Web Store
+    //the array can be empty, and the resulting TypeError went to a console nobody reads
+    //while the send silently never happened.
+    //
+    //Tabs are not filtered by URL: doing that needs the "tabs" permission, and the manifest
+    //already limits the content script to Google domains. Tabs without it just fail to
+    //receive, which is what the callback below absorbs.
     function sendToProgramJS(payload){
-        chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-            chrome.tabs.sendMessage(tabs[0].id, payload); ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        chrome.tabs.query({}, function (tabs){
+            if(!Array.isArray(tabs))
+                return;
+
+            for(const tab of tabs){
+                if(tab == null || tab.id == null)
+                    continue;
+
+                //Reading lastError is what stops Chrome logging "Receiving end does not
+                //exist" for every tab that has no content script in it.
+                chrome.tabs.sendMessage(tab.id, payload, function(){
+                    void chrome.runtime.lastError;
+                });
+            }
         });
     }
 
     //////////////////////////////////////////////////////////////////////
 });
+
+//Runs the popup's setup once the DOM is ready, immediately if it already is.
+//
+//popup.js used to hang everything on window "load", which waits for images and the rest of
+//the subresources. The scripts are deferred now, so this fires as soon as parsing is done.
+function whenPopupReady(action){
+    if(document.readyState === "loading")
+        document.addEventListener('DOMContentLoaded', action, { once: true });
+    else
+        action();
+}

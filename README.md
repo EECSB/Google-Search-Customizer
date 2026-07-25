@@ -61,6 +61,50 @@ I didn't make this extension for profit. As mentioned above I made this extensio
 
 I also thought this would be a good opportunity to learn how to make a web browser extension and document the progress on [my blog](https://eecs.blog/)(You can find [source code](https://github.com/EECSB/Google-Search-Customizer) my Github page). The extension is free and will continue to remain so. Feel free to copy any of the code or fork the project and make your own version of the extension with other/different features. 
 
+## Development
+
+The extension is plain HTML/CSS/JS with no build step — what is in
+`Google Search Customizer v1/` is exactly what ships. Load it unpacked to work on it.
+
+There is a test suite covering the DOM manipulation, the popup wiring, and the packaging.
+It runs the real source files in [jsdom](https://github.com/jsdom/jsdom) with stubbed
+`chrome.*` APIs, so no source file needs modifying to be testable:
+
+```bash
+npm install
+npm run check
+```
+
+That lints and then runs the tests; `npm run lint` and `npm test` do either half. Requires
+Node 20+. jsdom and ESLint are dev dependencies only; nothing is added to the extension.
+
+### How it works, briefly
+
+`rules.js` holds one table describing what each setting hides. The content script turns that
+into a stylesheet, injects it at `document_start` before the page has painted, and then puts
+one class on `<html>` per enabled setting:
+
+```css
+html.gsc-removeUrl .byrV5b { display: none !important; }
+html.gsc-askWidget *:has(> * > * > * > .EN1f2d) { display: none !important; }
+```
+
+So nothing is ever visible before being hidden, and switching a setting off puts the content
+straight back without a reload.
+
+### Documentation
+
+| Document | What it covers |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the pieces fit together and where to make a given change |
+| [docs/SELECTORS.md](docs/SELECTORS.md) | Every Google class name the extension targets, and how to update a stale one |
+| [docs/CODE-REVIEW.md](docs/CODE-REVIEW.md) | Known bugs and improvement opportunities, ranked |
+| [docs/TESTING.md](docs/TESTING.md) | How the test harness works and how to add cases |
+
+**If a setting has stopped working**, the cause is almost always a stale entry in
+[docs/SELECTORS.md](docs/SELECTORS.md) — Google changes its obfuscated class names without
+notice. That file explains how to find the new one.
+
 ## Privacy and Guarantees
 
 The extension doesn't collect any information at all. It only saves the setting you choose in the extension and saves it in your browser(Feel free to look at the [code](https://github.com/EECSB/Google-Search-Customizer).).

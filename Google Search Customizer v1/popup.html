@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
     <head>
-        <script src="popup.js"></script>
+        <meta charset="utf-8">
+        <!-- defaults.js must come first: it defines the configuration both scripts share.
+             Both are deferred, so they run after parsing without blocking it. -->
+        <script src="defaults.js" defer></script>
+        <script src="popup.js" defer></script>
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
@@ -16,69 +20,109 @@
             </div>
         </div>
 
-        <p id="message">Please refresh the page for the changes to take full effect!</p>
+        <!-- Settings apply to the open search pages as you change them. The one exception is
+             Remove Emojis: switching it on takes effect immediately, but switching it off
+             cannot put the deleted characters back without reloading. Shown only when it is
+             on, by popup.js. -->
+        <p id="message" hidden>Turning off "Remove Emojis" needs a page refresh to take effect.</p>
 
         <div id="optionsWrapper">
-            <h5 id="adTitle">URL Position and Apperance</h5>
+            <h5 class="sectionTitle">URL Position and Appearance</h5>
             <div class="controlsWrapper">
-                <input type="checkbox" id="removeUrlCheckBox" class="checkbox" name="removeUrl" value="url"> Remove URL<br>
-                <input type="checkbox" id="removeArrowCheckBox" class="checkbox" name="removeArrow" value="arrow"> Remove Arrow/Dots after URL<br>
-                <!--<input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move"> Move URL<br>-->
-                <input type="checkbox" id="colorUrlCheckBox" class="checkbox" name="colorUrl" value="color"> Color URL <input type="color" id="urlColorSelection" class="colorPicker" value="#ff0000"><br>
+                <input type="checkbox" id="removeUrlCheckBox" class="checkbox" name="removeUrl" value="url">
+                <label for="removeUrlCheckBox">Remove URL</label><br>
+                <input type="checkbox" id="removeArrowCheckBox" class="checkbox" name="removeArrow" value="arrow">
+                <label for="removeArrowCheckBox">Remove Arrow/Dots after URL</label><br>
+                <!--<input type="checkbox" id="moveCheckBox" class="checkbox" name="move" value="move">
+                <label for="moveCheckBox">Move URL</label><br>-->
+                <input type="checkbox" id="colorUrlCheckBox" class="checkbox" name="colorUrl" value="color">
+                <label for="colorUrlCheckBox">Color URL</label>
+                <input type="color" id="urlColorSelection" class="colorPicker" value="#008000" aria-label="URL color"><br>
             </div>
 
-            <h5 id="adTitle">Ad Settings</h5>
+            <h5 class="sectionTitle">Ad Settings</h5>
             <div id="radioWrapper" class="controlsWrapper">
-                <input type="radio" class="adsDisplay" name="adVisibility" value="remove"> Remove<br>
-                <input type="radio" class="adsDisplay" name="adVisibility" value="normal"> Normal<br>
-                <input type="radio" class="adsDisplay" name="adVisibility" value="standOut1"> Stand Out<br>
-                <input type="radio" class="adsDisplay" name="adVisibility" value="standOut2"> Really Stand Out <input type="color" id="adBackgroundColorSelection" class="colorPicker" value="#faebd7"><br>
+                <input type="radio" id="adsRemoveRadio" class="adsDisplay" name="adVisibility" value="remove">
+                <label for="adsRemoveRadio">Remove</label><br>
+                <input type="radio" id="adsNormalRadio" class="adsDisplay" name="adVisibility" value="normal">
+                <label for="adsNormalRadio">Normal</label><br>
+                <input type="radio" id="adsStandOutRadio" class="adsDisplay" name="adVisibility" value="standOut1">
+                <label for="adsStandOutRadio">Stand Out</label><br>
+                <input type="radio" id="adsStandOut2Radio" class="adsDisplay" name="adVisibility" value="standOut2">
+                <label for="adsStandOut2Radio">Really Stand Out</label>
+                <input type="color" id="adBackgroundColorSelection" class="colorPicker" value="#faebd7" aria-label="Ad background color"><br>
             </div>
 
-            <h5 id="adTitle">Widget Settings</h5>
+            <h5 class="sectionTitle">Widget Settings</h5>
             <div id="widgetsMessage">Select the widgets you want removed.</div>
             <div class="controlsWrapper">
-                <input type="checkbox" id="searchWidgetCheckBox" class="checkbox"> "People also search for" or "Related searches" Widget<br>
-                <input type="checkbox" id="askWidgetCheckBox" class="checkbox"> "People also ask" Widget<br>
-                <input type="checkbox" id="twitterWidgetCheckBox" class="checkbox"> Twitter Widget<br>
-                <input type="checkbox" id="newsWidgetCheckBox" class="checkbox"> News Widget<br>
-                <input type="checkbox" id="mapsWidgetCheckBox" class="checkbox"> Google Maps Widget<br>
-                <input type="checkbox" id="sideBarWidgetCheckBox" class="checkbox"> Side Bar Info. Widget<br>
-                <input type="checkbox" id="ratingsWidgetCheckBox" class="checkbox"> Ratings<br>
-                <input type="checkbox" id="youtubeWidgetCheckBox" class="checkbox"> Youtube Videos Widget<br>
-                <input type="checkbox" id="mapsFindResultsOnWidgetCheckBox" class="checkbox"> "Find Results On" Widget<br>
-                <input type="checkbox" id="thingsToDoWidgetCheckBox" class="checkbox"> "Things To Do" Widget<br>
-                <input type="checkbox" id="thingsToKnowWidgetCheckBox" class="checkbox"> "Things To Know" Widget<br>
-                <input type="checkbox" id="imagesWidgetCheckBox" class="checkbox"> Images Widget<br>
-                <input type="checkbox" id="featuredSnippetCheckBox" class="checkbox"> AI Overview / Featured Snippet Widget<br>
-                <input type="checkbox" id="dictionaryWidgetCheckBox" class="checkbox"> Dictionary Widget<br>
-                <input type="checkbox" id="businessesWidgetCheckBox" class="checkbox"> Businesses Widget<br>
-                <input type="checkbox" id="topSightsWidgetCheckBox" class="checkbox"> Top Sights Widget<br>
-                <input type="checkbox" id="aboutWidgetCheckBox" class="checkbox"> About Widget(has various info at top of page)<br>
-                <input type="checkbox" id="popularExploreBuyWidgetCheckBox" class="checkbox"> Popular/Explore Brands and People Also Buy<br>
-                <input type="checkbox" id="relatedProductsServicesWidgetCheckBox" class="checkbox"> Find related products & services<br>
-                <input type="checkbox" id="placesToVisitWidgetCheckBox" class="checkbox"> Places to visit<br>
+                <input type="checkbox" id="searchWidgetCheckBox" class="checkbox">
+                <label for="searchWidgetCheckBox">"People also search for" or "Related searches" Widget</label><br>
+                <input type="checkbox" id="askWidgetCheckBox" class="checkbox">
+                <label for="askWidgetCheckBox">"People also ask" Widget</label><br>
+                <input type="checkbox" id="twitterWidgetCheckBox" class="checkbox">
+                <label for="twitterWidgetCheckBox">Twitter Widget</label><br>
+                <input type="checkbox" id="newsWidgetCheckBox" class="checkbox">
+                <label for="newsWidgetCheckBox">News Widget</label><br>
+                <input type="checkbox" id="mapsWidgetCheckBox" class="checkbox">
+                <label for="mapsWidgetCheckBox">Google Maps Widget</label><br>
+                <input type="checkbox" id="sideBarWidgetCheckBox" class="checkbox">
+                <label for="sideBarWidgetCheckBox">Side Bar Info. Widget</label><br>
+                <input type="checkbox" id="ratingsWidgetCheckBox" class="checkbox">
+                <label for="ratingsWidgetCheckBox">Ratings</label><br>
+                <input type="checkbox" id="youtubeWidgetCheckBox" class="checkbox">
+                <label for="youtubeWidgetCheckBox">Youtube Videos Widget</label><br>
+                <input type="checkbox" id="mapsFindResultsOnWidgetCheckBox" class="checkbox">
+                <label for="mapsFindResultsOnWidgetCheckBox">"Find Results On" Widget</label><br>
+                <input type="checkbox" id="thingsToDoWidgetCheckBox" class="checkbox">
+                <label for="thingsToDoWidgetCheckBox">"Things To Do" Widget</label><br>
+                <input type="checkbox" id="thingsToKnowWidgetCheckBox" class="checkbox">
+                <label for="thingsToKnowWidgetCheckBox">"Things To Know" Widget</label><br>
+                <input type="checkbox" id="imagesWidgetCheckBox" class="checkbox">
+                <label for="imagesWidgetCheckBox">Images Widget</label><br>
+                <input type="checkbox" id="featuredSnippetCheckBox" class="checkbox">
+                <label for="featuredSnippetCheckBox">AI Overview / Featured Snippet Widget</label><br>
+                <input type="checkbox" id="dictionaryWidgetCheckBox" class="checkbox">
+                <label for="dictionaryWidgetCheckBox">Dictionary Widget</label><br>
+                <input type="checkbox" id="businessesWidgetCheckBox" class="checkbox">
+                <label for="businessesWidgetCheckBox">Businesses Widget</label><br>
+                <input type="checkbox" id="topSightsWidgetCheckBox" class="checkbox">
+                <label for="topSightsWidgetCheckBox">Top Sights Widget</label><br>
+                <input type="checkbox" id="aboutWidgetCheckBox" class="checkbox">
+                <label for="aboutWidgetCheckBox">About Widget(has various info at top of page)</label><br>
+                <input type="checkbox" id="popularExploreBuyWidgetCheckBox" class="checkbox">
+                <label for="popularExploreBuyWidgetCheckBox">Popular/Explore Brands and People Also Buy</label><br>
+                <input type="checkbox" id="relatedProductsServicesWidgetCheckBox" class="checkbox">
+                <label for="relatedProductsServicesWidgetCheckBox">Find related products &amp; services</label><br>
+                <input type="checkbox" id="placesToVisitWidgetCheckBox" class="checkbox">
+                <label for="placesToVisitWidgetCheckBox">Places to visit</label><br>
             </div>
 
-            <h5 id="adTitle">Additional Settings</h5>
+            <h5 class="sectionTitle">Additional Settings</h5>
             <div class="controlsWrapper">
-                <input type="checkbox" id="removeEmojisCheckBox" class="checkbox" name="removeEmojis" value="emoji"> Remove Emojis<br>
-                <input type="checkbox" id="imagesCheckBox" class="checkbox"> Remove images within search results<br>
-                <input type="checkbox" id="siteFaviconsCheckBox" class="checkbox"> Remove favicon images within search results<br>
-                <input type="checkbox" id="videoTumbnailsCheckBox" class="checkbox"> Remove video thumbnails from search results<br>
-                <input type="checkbox" id="aiModeTabCheckBox" class="checkbox"> Remove AI mode tab<br>
-                <input type="checkbox" id="otherMessagesCheckBox" class="checkbox"> Other Messages<br>
+                <input type="checkbox" id="removeEmojisCheckBox" class="checkbox" name="removeEmojis" value="emoji">
+                <label for="removeEmojisCheckBox">Remove Emojis</label><br>
+                <input type="checkbox" id="imagesCheckBox" class="checkbox">
+                <label for="imagesCheckBox">Remove images within search results</label><br>
+                <input type="checkbox" id="siteFaviconsCheckBox" class="checkbox">
+                <label for="siteFaviconsCheckBox">Remove favicon images within search results</label><br>
+                <input type="checkbox" id="videoTumbnailsCheckBox" class="checkbox">
+                <label for="videoTumbnailsCheckBox">Remove video thumbnails from search results</label><br>
+                <input type="checkbox" id="aiModeTabCheckBox" class="checkbox">
+                <label for="aiModeTabCheckBox">Remove AI mode tab</label><br>
+                <input type="checkbox" id="otherMessagesCheckBox" class="checkbox">
+                <label for="otherMessagesCheckBox">Other Messages</label><br>
             </div>
 
             <button id="defaultSettings">Restore Defaults</button>
             <br>
             <br>
-            
-            <a class="link" target="_blank" href="https://github.com/EECSB/Google-Search-Customizer/issues/">Report a bug</a> 
+
+            <a class="link" target="_blank" rel="noopener" href="https://github.com/EECSB/Google-Search-Customizer/issues/">Report a bug</a>
             <br>
-            <a class="link" target="_blank" href="https://github.com/EECSB/Google-Search-Customizer/">Open Source GitHub Code Repository</a>
+            <a class="link" target="_blank" rel="noopener" href="https://github.com/EECSB/Google-Search-Customizer/">Open Source GitHub Code Repository</a>
             <br>
-            <span>Developed by: &nbsp; <a target="_blank" href="https://eecs.blog/">  The EECS Blog</a></span>
+            <span>Developed by: &nbsp; <a target="_blank" rel="noopener" href="https://eecs.blog/">The EECS Blog</a></span>
         </div>
     </body>
 </html>

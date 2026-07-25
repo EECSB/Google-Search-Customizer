@@ -1,0 +1,27 @@
+{
+  "name": "google-search-customizer",
+  "version": "1.2.20",
+  "private": true,
+  "description": "Test harness and developer tooling for the Google Search Customizer browser extension.",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EECSB/Google-Search-Customizer"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "test:watch": "node --test --watch \"tests/**/*.test.js\"",
+    "lint": "eslint .",
+    "check": "npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.7.0",
+    "jsdom": "^26.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

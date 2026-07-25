@@ -1,95 +1,113 @@
-//Checks if this is actually the Google search engine and not some other site.
+//Content script///////////////////////////////////////////////////////////////////////
+//
+//Runs at document_start. Almost everything this extension does is expressed as CSS in
+//rules.js: this file injects that stylesheet before the page paints, then puts a class on
+//<html> for each enabled setting.
+//
+//Doing it that way means nothing is ever visible before being hidden, and switching a
+//setting off puts the content straight back - neither of which was true when every setting
+//was a sequence of querySelectorAll calls writing style.display = 'none' at document_idle.
+//
+//Two things cannot be done in CSS and still run as scripted passes over the DOM:
+//  - removing emojis, which edits text
+//  - collapsing the gap a hidden widget leaves behind, which needs "the sibling before the
+//    element that has this descendant" - :has() cannot be nested, so it cannot say that
+
+
+//Site check////////////////////////////////////////////////////////////////////////////
+
+//True when this page is served from a Google domain.
+//
+//Checks the hostname rather than the whole URL. The previous version tested
+//location.href.includes(".google."), which a path or query string was enough to satisfy -
+//https://example.com/?ref=www.google.com passed it. The manifest now also limits injection
+//to Google domains, so this is the second of two gates rather than the only one.
+function isGoogleDomain(){
+    const hostname = window.location.hostname;
+
+    //google.com, www.google.com, google.co.uk, www.google.com.au, ...
+    return /(^|\.)google(\.[a-z]{2,3})+$/.test(hostname);
+}
+
+//Returns true on a Google search results page, false on a page that is definitely not one,
+//and undefined when it cannot tell yet.
+//
+//The third answer matters now that this runs at document_start: the check reads an
+//attribute off <html>, and callers need to distinguish "not a search page" from "the parser
+//has not got there yet" so they know whether it is worth asking again later.
 function checkIfRun(){
     //Don't run script if not on a google domain.
-    if(!window.location.href.includes(".google."))
+    if(!isGoogleDomain())
         return false;
 
     const elements = document.getElementsByTagName("html");
 
-    for(element of elements){
-        const itemTypeValue = element.getAttribute('itemtype');        
-        
+    for(let element of elements){
+        const itemTypeValue = element.getAttribute('itemtype');
+
         //Only run script if we are on the search results page.
-        if(itemTypeValue !== null){
-            if(itemTypeValue.includes('SearchResultsPage'))
-                return true;
-            else
-                return false;
-        }
+        if(itemTypeValue !== null)
+            return itemTypeValue.includes('SearchResultsPage');
     }
+
+    return undefined;
 }
 
-if(checkIfRun()){
-    //Initialization///////////////////////////////////////////////////////////
 
-    let configuration = {
-        "removeUrl" : false,
-        "removeArrow" : false,
-        "moveUrl": false,
-        "colorUrl": false,
-        "adsDisplay" : "normal", //"remove", "standOut1", "standOut2"
-        "searchWidget": false,
-        "askWidget": false,
-        "twitterWidget": false,
-        "newsWidget": false,
-        "mapsWidget": false,
-        "sideBarWidget": false,
-        "ratingsWidget": false,
-        "urlColor" : "#008000",
-        "adBackgroundColor" : "#faebd7",
-        "removeEmojis": false,
-        "youtubeWidtget": false,
-        "images": false,
-        "mapsFindResultsOnWidget": false,
-        "thingsToDoWidget": false,
-        "thingsToKnowWidget": false,
-        "imagesWidget": false,
-        "featuredSnippet": false,
-        "dictionaryWidget": false,
-        "businessesWidget": false,
-        "topSightsWidget": false,
-        "otherMessages": false,
-        "siteFavicons": false,
-        "videoTumbnails": false,
-        "aboutWidget": false,
-        "popularExploreBuyWidget": false,
-        "theme": "light",
-        "aiModeTab": false,
-        "relatedProductsServicesWidget": false,
-        "placesToVisitWidget": false
-    };
+//Startup///////////////////////////////////////////////////////////////////////////////
+//
+//The statement that actually starts everything is the last thing in this file. Function
+//declarations hoist but const and let do not, so running it from up here would reach
+//module state that has not been initialised yet. Everything below is declarations.
 
-    chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-        if ('configuration' in storedConfiguration) { // if there is a stored configuration already
-            sendToMain(storedConfiguration);
-        }
-        else { // if there is no stored configuration yet = extension hasn't been used yet
-            chrome.storage.sync.set({'configuration': configuration}, function(){}); // store the default configuration
-            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-                sendToMain(storedConfiguration);
-            });
-        }
-    });
+//Calls onConfirmed as soon as this is known to be a results page. At document_start the
+//<html> attributes are normally parsed already; if they are not, this waits rather than
+//deciding the answer is no.
+function whenSearchPageConfirmed(onConfirmed){
+    const verdict = checkIfRun();
 
-    //Set configuration object to the saved one and set run main function.
-    function sendToMain(storedConfiguration) {
-        configuration = storedConfiguration;
-        modifySearchResults(configuration["configuration"]);
+    if(verdict === true){
+        onConfirmed();
+        return;
     }
 
-    //Register ajax event listener to listen for requests so we can reapply the styling on endless scroll page refresh.
-    var requestObserver = new PerformanceObserver( onRequestsObserved );
-    requestObserver.observe( { type: 'resource' } );
+    if(verdict === false)
+        return;
 
-    function onRequestsObserved(batch) {
+    document.addEventListener('DOMContentLoaded', function(){
+        if(checkIfRun() === true)
+            onConfirmed();
+    }, { once: true });
+}
+
+function start(){
+    chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+        const configuration = applyConfigurationDefaults(storedConfiguration["configuration"]);
+
+        //Write back on a cold start, and also when the saved configuration predates
+        //settings that have been added since - otherwise those settings stay missing.
+        if(configurationNeedsUpgrade(storedConfiguration["configuration"]))
+            chrome.storage.sync.set({'configuration': configuration}, function(){});
+
+        modifySearchResults(configuration);
+    });
+
+    //Register ajax event listener to listen for requests so we can reapply the styling on endless scroll page refresh.
+    //
+    //Only the scripted passes need this now. The CSS rules match new results on their own,
+    //which is most of what this observer used to be for.
+    const requestObserver = new PerformanceObserver(onRequestsObserved);
+    requestObserver.observe({ type: 'resource' });
+
+    function onRequestsObserved(batch){
         const entries = batch.getEntries();
 
         let requestWasMade = false;
-        for(entry of entries){
+        for(let entry of entries){
             //Check if the entry is a XHR or fetch.
-            if (entry.initiatorType === 'xmlhttprequest' || entry.initiatorType === 'fetch') {
+            if(entry.initiatorType === 'xmlhttprequest' || entry.initiatorType === 'fetch'){
                 //Check if this is a request for more search results.
-                if (entry.name.includes('search?')) {
+                if(entry.name.includes('search?')){
                     requestWasMade = true;
                     break;
                 }
@@ -97,597 +115,358 @@ if(checkIfRun()){
         }
 
         if(requestWasMade){
-            chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
-                modifySearchResults(storedConfiguration["configuration"]);
+            chrome.storage.sync.get(['configuration'], function(storedConfiguration){
+                applyScriptedPasses(applyConfigurationDefaults(storedConfiguration["configuration"]));
             });
         }
     }
 }
 
-////////////////////////////////////////////////////////////////////////
 
-
-//Receive data from popup.js////////////////////////////////////////////
-
-chrome.runtime.onMessage.addListener(receivedMessage);
+//Receive data from popup.js////////////////////////////////////////////////////////////
 
 function receivedMessage(message, sender, response){
-    modifySearchResults(message["configuration"]);
+    //The listener is registered before the page is known to be a results page, because the
+    //popup may send at any time. Re-checking here is what keeps a configuration change from
+    //being applied to Maps, Drive, or any other Google page that is not a SERP.
+    if(checkIfRun() !== true)
+        return;
+
+    modifySearchResults(applyConfigurationDefaults(message["configuration"]));
 }
 
-/////////////////////////////////////////////////////////////////////////
 
+//Main Function/////////////////////////////////////////////////////////////////////////
 
-//Main Function//////////////////////////////////////////////////////////
-
+//Applies a configuration to the page.
+//
+//The gating classes go on immediately - that is what makes a setting take effect, and
+//removing one is what makes it reversible. The scripted passes need real elements, so they
+//wait for the DOM if the page is still parsing.
 function modifySearchResults(configuration){
-    //Remove Url////////////////////////////////////////////////////////
-    if(configuration.removeUrl){
-        //Remove url and icon.
-        removeElements(".byrV5b", 0);
-        //Remove url and icon on the litle pages thingy that appears.
-        removeElements(".qdrjAc", 0);
+    attempt("applying gating classes", function(){
+        applyGatingClasses(configuration);
+    });
 
-        //Decrease distance between results.
-        //If this is left enabled the results will have no spacing between them whatsoever.
-        //Seems like this isn't needed anymore?
-        /*let elements = document.getElementsByClassName("TbwUpd");
-        for (let i = 0; i < elements.length; i++){
-            br = elements[i].parentNode.getElementsByTagName('br');
-            if(br.length != 0)
-                br[0].parentNode.removeChild(br[0]);
-        }*/
-    }
+    attempt("applying colour styles", function(){
+        applyColorStyleSheet(configuration);
+    });
 
-
-    //Remove arrows at the end of urls////////////////////////////////////
-    if(configuration.removeArrow || configuration.removeUrl || configuration.moveUrl){
-        //Remove arrow.
-        removeElements(".B6fmyf", 0);
-        //Remove arrow from ad.
-        removeElements(".e1ycic", 0);
-        //Remove 3 dots if present instead of arrow.
-        removeElements(".D6lY4c", 0);
-        //Remove 3 dots if present instead of arrow in ads.
-        removeElements(".ONMH0e", 0);
-
-        //removeElements(".rIbAWc", 0); //causes problem by hiding the tools as the same class is also used there: https://github.com/EECSB/Google-Search-Customizer/issues/16
-    }
-
-
-    //Modify Ads///////////////////////////////////////////////////////////////////////
-    if(configuration.adsDisplay == "standOut1" || configuration.adsDisplay == "standOut2"){
-        //Make ad more obvious.
-        let element = document.querySelectorAll(".U3A9Ac.qV8iec");
-
-        for (let i = 0; i < element.length; i++){
-            element[i].style.color = "green";
-            element[i].style.border = "1px solid green";
-            element[i].style.borderRadius = "5px";
-            element[i].style.margin = "0px";
-            element[i].style.padding = "0px 5px 0px 5px";
-
-            if(configuration.adsDisplay == "standOut2"){
-                element[i].style.backgroundColor = configuration.adBackgroundColor;
-            }
-        }
-
-        if(configuration.adsDisplay == "standOut2"){
-            let adElements = document.querySelectorAll('#tads, #tadsb, #bottomads'); //tvcap
-
-            //Color ads if any are present.
-            if(adElements != undefined){
-                for (let adElement of adElements){
-                    if(adElement.innerHTML != ""){
-                        //Color ads.
-                        adElement.style.backgroundColor = configuration.adBackgroundColor;
-                        adElement.style.padding = "10px";
-
-                        //Apply background color to every child element
-                        const childElements = adElement.querySelectorAll('*');
-                        for (let child of childElements)
-                            child.style.backgroundColor = configuration.adBackgroundColor;
-                    }
-                }
-            }
-        }
-    }else if(configuration.adsDisplay == "remove"){
-        //Remove whole ad section(top).
-        removeElements("#tads", 0);
-        //Remove whole ad section(bottom).
-        removeElements("#tadsb", 0);
-        //Remove whole ad section.
-        removeElements(".ads-ad", 0);
-
-        //If top ads are present move up search results to reduce the gap.
-        //Disable this as in come cases the search results will go over the top bar.
-        //if(document.getElementById("tads") != null)
-        //    document.getElementById("center_col").style.top = "-80px";
-    }
-    
-    /*
-    //Move Url////////////////////////////////////////////////////////////////
-    if(configuration.moveUrl){
-        //Push url and favicon under title.
-        const elements = document.querySelectorAll('h3.LC20lb');
-        for(element of elements){
-            element.style.marginTop = '0';
-            element.style.marginBottom = '0'; //element.nextSibling.clientHeight + "px"; //Same as the height of the url div
-
-            element.nextSibling.style.marginTop = 50 + "px"; //Same as height of the h3 element before it. //element.clientHeight
-        }
-
-        //Decrease vertical spacing between results.
-        const searchResults = document.querySelectorAll('.g.Ww4FFb.vt6azd.tF2Cxc.asEBEc');
-        for(result of searchResults){
-            result.style.marginBottom = '0';
-        }
-    }
-
-
-    //Move Url(within Ads)////////////////////////////////////////////////////
-    if(configuration.moveUrl && (configuration.adsDisplay != "remove")){
-        //Push url and favicon under title.
-        const elements = document.querySelectorAll('.CCgQ5.vCa9Yd.QfkTvb.N8QANc.Va3FIb.EE3Upf');
-        for(element of elements){
-            element.style.marginTop = '0';
-            element.style.marginBottom = element.nextSibling.clientHeight + "px"; //Same as the height of the url div
-
-            element.nextSibling.style.marginTop = element.clientHeight + "px"; //Same as height of the h3 element before it.
-        }
-        
-        //Decrease vertical spacing between results.
-        const searchResults = document.querySelectorAll('.wHYlTd'); //wHYlTd Ww4FFb vt6azd tF2Cxc asEBEc
-        for(result of searchResults){
-            result.style.marginBottom = '0';
-        }
-        
-        const searchResults2 = document.querySelectorAll('.JCZQSb');
-        for(result of searchResults2){
-            result.parentNode.parentNode.style.marginTop = '0';
-            result.parentNode.parentNode.style.marginBottom = '0';
-        }
-        
-
-        //If top ads are present move up search results to reduce the gap.
-        //Disable this as in come cases the search results will go over the top bar.
-        //if(document.getElementById("tads") != null)
-        //   document.getElementById("center_col").style.top = "-80px";
-    }
-    */
-
-
-    
-
-    //Remove Widgets///////////////////////////////////////////
-
-    if(configuration.adsDisplay == "remove"){
-        //Don't apply this if the shopping tab is selected. 
-        //sclient=gws-wiz-modeless-shopping seems to only be present in the shopping tab. However it's not present when you first switch from the search tab to the shopping tab, only when subsequent searches are done in the shopping tab.
-        //udm=28 seems to be the parameter that selects the shopping tab. For example, if udm=15 is used the "Things to do" tab will be selected.
-        if(!window.location.href.includes("sclient=gws-wiz-modeless-shopping") && !window.location.href.includes("udm=28"))
-        {
-            removeElements(".IhvZRb", 2); //Ads in side bar widget
-            removeElements(".T98FId", 2); //Ads in search results(as widget or "Popular products widget")
-    
-            removePaddingBeforeWidget(".T98FId", 2);
-        }
-    }
-    
-
-    if(configuration.searchWidget){
-        removeElements("#bres", 0);
-        removeElements(".O3JH7", 2);
-
-        removeElements(".YR2tRd", 2);
-        
-        removeElements(".O8VmIc", 2); //Search widget in image search.
-    }
-
-    if(configuration.askWidget){
-        removeElements(".JolIg", 4); //Not sure if still needed?
-        removeElements(".EN1f2d", 4);
-
-        removeElements(".Okagcf", 1); //For widgets inline/embedded into the search result.
-
-        removePaddingBeforeWidget(".EN1f2d", 4);
-    }
-        
-    if(configuration.twitterWidget){
-        removeElements(".otisdd", 2); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
-        //removeElements(".M42dy", 8);
-        removeElementsFromTo(".M42dy", ".ULSxyf", 8);
-
-        removePaddingBeforeWidget(".otisdd", 6); //Doesn't seem to work anymore but I will leave it here in case this class is used only in certain cases for the twitter widget.
-        //removePaddingBeforeWidget(".M42dy", 8);
-        removePaddingBeforeWidgetFromTo(".M42dy", 8);
-    }
-        
-    if(configuration.newsWidget){
-        removeElements(".AHFbof", 4); //Class not always present in news widget.
-        removeElements(".aUSklf", 4);
-        removeElements(".yG4QQe", 2);
-
-        removePaddingBeforeWidget(".AHFbof", 4); //Class not always present in news widget.
-        removePaddingBeforeWidget(".aUSklf", 4);
-    }
-
-    if(configuration.mapsWidget){
-        removeElements(".AEprdc", 1); //Not sure if this class is still relevant.
-        removeElements(".kqmHwe", 1);
-
-        removeElementsFromTo(".Qq3Lb", ".ULSxyf", 4);
-
-        removePaddingBeforeWidget(".kqmHwe", 4);
-        removePaddingBeforeWidgetFromTo(".Qq3Lb", ".ULSxyf", 3);
-
-        //Map + Images widget
-        removeElements(".Lx2b0d", 12);
-
-        //City name
-        removeElements(".XqFnDf", 0);
-    }
-
-    if(configuration.mapsFindResultsOnWidget){
-        removeElements("#i4BWVe", 1);
-
-        removePaddingBeforeWidget("#i4BWVe", 1);
-    }
-
-    if(configuration.youtubeWidtget){ 
-        removeElements(".uVMCKf", 0);
-        removeElements(".PYmpec", 4);
-        
-        //removePaddingBeforeWidget(".uVMCKf", 2);
-    }
-
-    if(configuration.sideBarWidget){
-        removeElements(".liYKde", 1);
-        removeElements(".Lj180d", 6);
-        removeElements(".TQc1id", 0);
-    }
-
-    if(configuration.ratingsWidget){
-        removeElements(".liYKde", 1);
-        removeElements(".dhIWPd", 1);
-        removeElements(".fG8Fp", 1);
-        removeElements(".smukrd", 1);
-    }
-
-    if(configuration.thingsToDoWidget){
-        ///Not sure if still needed? //////////////
-        removeElements(".IYoemc", 3);
-        removePaddingBeforeWidget(".IYoemc", 3);
-        ///////////////////////////////////////////
-        
-        removeElements(".NfrtPd.UE0K3b.QsV5nc", 7);
-        removePaddingBeforeWidget(".NfrtPd.UE0K3b.QsV5nc", 7);
-    }
-
-    if(configuration.thingsToKnowWidget){
-        removeElements(".dnXCYb", 7);
-    }
-
-    if(configuration.imagesWidget){
-        removeElements("#iur", 3);
-        removeElements(".hisnlb", 8); 
-        
-        removePaddingBeforeWidget("#iur", 3); 
-    }
-
-    if(configuration.featuredSnippet){
-        removeElements("#Odp5De", 0);
-        removeElements(".yKMVIe", 10);
-        
-        //AI Overview
-        removeElements(".Wm5I1e", 0);
-        removeElements(".YzCcne", 0);
-    }
-    
-    if(configuration.dictionaryWidget){
-        removeElements(".bH1Fqd", 13);
-
-        removePaddingBeforeWidget("#iur", 4);
-    }
-
-    if(configuration.businessesWidget){
-        removeElements(".ixfGmd", 3);
-
-        removePaddingBeforeWidget(".ixfGmd", 3);
-    }
-
-    if(configuration.topSightsWidget){
-        removeElements(".UXerFf", 6);
-
-        removePaddingBeforeWidget(".UXerFf", 6);
-    }
-
-    if(configuration.otherMessages){
-        removeElements(".WcS13d", 1);
-
-        removePaddingBeforeWidget(".WcS13d", 3);
-    }
-    
-    if(configuration.siteFavicons){
-        removeElements(".H9lube", 0);
-        removeElements(".DDKf1c", 0);
-    }
-
-    if(configuration.aboutWidget){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
-        removeElements(".bzXtMb", 0);
-        removeElements(".yTFeqb.wp-ms.oJxARb.nBWfrd.VE2Ztc", 3);
-        removeElements(".GJi8Lc", 6);
-
-        //Stuff like conversion tables, etc...
-        removeElements(".dG2XIf", 3);
-    }
-
-    
-    if(configuration.popularExploreBuyWidget){
-        removeElements(".ednlu.GAJC", 8);//removeElements(".aJegcc", 1);
-        removeElements(".OTMJR.IFnjPb.SlP8xc.RES9jf", 4);
-        
-        //Determmine if we are in the shopping tab.
-        const searchForm = document.getElementById("searchform");
-        if (searchForm) {
-            let isShoppingTab = false;
-            const links = searchForm.getElementsByTagName("a");
-            for (let link of links) {
-                if (link.href.includes("/shopping?sca_esv")) {
-                    isShoppingTab = true;
-                }
-            }
-
-            if(!isShoppingTab)
-                removeElements("#sho-qu__spinnerContainer", 8);
-        }
-    }
-
-
-    if(configuration.relatedProductsServicesWidget){
-        removeElements("#HbKV2c", 0);
-    }
-
-    if(configuration.placesToVisitWidget){
-        removeElements(".J1FGbf", 16);
-    }
-
-
-    //Images next to/in some search results
-    if(configuration.images){
-        removeElements(".LnCrMe", 0);
-        removeElements(".Sth6v", 0);
-        removeElements(".AzcMvf", 1);
-        removeElements(".SuXxEf", 0);
-
-        removeElements(".kb0PBd.cvP2Ce.LnCrMe", 0);
-        removeElements(".kb0PBd.cvP2Ce.LnCrMe.QgmGr", 0);
-        removeElements(".EPx5le", 2);
-
-        //////////////////////////////////////////////
-        //Remove maybe?
-
-        removeElements(".W27f5e", 1); //Not sure if still needed.
-
-        ApplyToClass("SD80kd", function(element){ //Not sure if still needed.
-            element.style.display = "none";
+    whenDomReady(function(){
+        //isShoppingTab is partly a question about the DOM, so the classes are worked out
+        //again once there is a DOM to ask.
+        attempt("applying gating classes", function(){
+            applyGatingClasses(configuration);
         });
-        
-        removeElements(".fWhgmd", 4); //Not sure if still needed.
 
-        //////////////////////////////////////////////
+        applyScriptedPasses(configuration);
+    });
+}
+
+//The passes that cannot be expressed as CSS, plus the fallback walk for browsers without
+//:has(). Re-run whenever Google appends more results.
+function applyScriptedPasses(configuration){
+    attempt("marking widget spacing", function(){
+        markCollapseTargets(configuration);
+    });
+
+    attempt("removing emojis", function(){
+        if(configuration.removeEmojis)
+            removeEmojis();
+    });
+
+    attempt("hiding elements without :has() support", function(){
+        if(!supportsHasSelector())
+            hideWithoutHasSupport(configuration);
+    });
+}
+
+
+//Stylesheet injection//////////////////////////////////////////////////////////////////
+
+const REMOVAL_STYLE_ID = "gsc-removal-styles";
+const COLOR_STYLE_ID = "gsc-color-styles";
+
+//Injects the generated stylesheet.
+//
+//At document_start there is no <head> yet, so this appends to <html> - which is valid, and
+//is what makes the rules apply to elements that do not exist yet.
+function injectRemovalStyleSheet(){
+    attempt("injecting the stylesheet", function(){
+        if(document.getElementById(REMOVAL_STYLE_ID) != null)
+            return;
+
+        const style = document.createElement("style");
+        style.id = REMOVAL_STYLE_ID;
+        style.textContent = buildRemovalStyleSheet({ supportsHas: supportsHasSelector() });
+
+        document.documentElement.appendChild(style);
+    });
+}
+
+//Rewrites the colour rules. Separate from the sheet above so that dragging a colour picker
+//replaces four rules instead of two hundred.
+function applyColorStyleSheet(configuration){
+    let style = document.getElementById(COLOR_STYLE_ID);
+
+    if(style == null){
+        style = document.createElement("style");
+        style.id = COLOR_STYLE_ID;
+        document.documentElement.appendChild(style);
     }
 
-    //Video thumbnails next to/in some search results
-    if(configuration.videoTumbnails){
-        removeElements(".gY2b2c", 0);
-    }
+    style.textContent = buildColorStyleSheet(configuration);
+}
 
-    //Remove Ai Mode tab
-    if(configuration.aiModeTab){
-        removeElements(".olrp5b", 2);
-    }
-    
-    //Color Url////////////////////////////////////////////////////////////////
-    if(configuration.colorUrl){
-        //Set url color
-        setUrlColor(configuration.urlColor);
-        //Set url color in ads.
-        setUrlColorAds(configuration.urlColor);
-    }
+//Puts one class on <html> per enabled setting, and takes off the ones that are no longer
+//enabled. Taking them off is what restores content the user has stopped hiding.
+function applyGatingClasses(configuration){
+    const wanted = gatingClassesFor(configuration, { isShoppingTab: isShoppingTab() });
+    const root = document.documentElement;
 
-    //Remove emojis//////////////////////////////////////////////////////////////
-    if(configuration.removeEmojis){
-        //Make list of elements to be processed.
-        let listOfElementLists = [
-            document.getElementsByClassName("LC20lb"), 
-            document.getElementsByClassName("st"),
-            document.getElementsByClassName("cbphWd"),
-            document.getElementsByClassName("fl"),
-            document.getElementsByClassName("VwiC3b")
-        ]; 
-
-        //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
-        forEachDoThis(listOfElementLists, function(element){
-            const cleanedString =element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-            if(element.innerText != cleanedString)
-                element.innerText = cleanedString;
-        });
+    for(const className of allGatingClasses()){
+        root.classList.toggle(className, wanted.includes(className));
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//True when :has() is usable. Chrome 105+ and Firefox 121+; older browsers fall back to the
+//scripted parent walk below.
+let hasSelectorSupport = null;
+
+function supportsHasSelector(){
+    if(hasSelectorSupport === null){
+        hasSelectorSupport =
+            typeof CSS !== "undefined" &&
+            typeof CSS.supports === "function" &&
+            CSS.supports("selector(:has(*))");
+    }
+
+    return hasSelectorSupport;
+}
 
 
+//Shopping tab detection////////////////////////////////////////////////////////////////
 
-//Search results modification functions/////////////////////////////////////////
+//Product blocks and the shopping spinner are ads on the results tab and legitimate content
+//on the Shopping tab, so several rules ask about this.
+//
+//udm=28 selects the Shopping tab. sclient=gws-wiz-modeless-shopping only appears once a
+//search has been run from within that tab, so the search form is checked as well.
+function isShoppingTab(){
+    if(window.location.href.includes("sclient=gws-wiz-modeless-shopping"))
+        return true;
 
-function removePaddingBeforeWidgetFromTo(name, parentName, maxParentNum){
-    let elements = document.querySelectorAll(name);
+    if(window.location.href.includes("udm=28"))
+        return true;
 
-    for (let i = 0; i < elements.length; i++){
-        let node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
+    const searchForm = document.getElementById("searchform");
 
-        if(node != undefined && node != null){
-            let prevNode = node.previousElementSibling;
-            if(prevNode != undefined)
-                prevNode.style.margin = "0px";
+    if(searchForm != null){
+        for(let link of searchForm.getElementsByTagName("a")){
+            if(link.href.includes("/shopping?sca_esv"))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+
+//Widget spacing////////////////////////////////////////////////////////////////////////
+
+//Tags the element that should lose its margin so a hidden widget does not leave a gap.
+//
+//CSS cannot express this: it needs "the sibling before the element that has this
+//descendant", and :has() is not allowed inside :has(). So the element is found by script
+//and marked, and the stylesheet does the rest - which keeps it reversible, because the
+//margin only applies while the setting's class is on <html>.
+function markCollapseTargets(configuration){
+    const context = { isShoppingTab: isShoppingTab() };
+
+    for(const rule of REMOVAL_RULES){
+        if(!rule.collapse || !ruleIsEnabled(rule, configuration, context))
+            continue;
+
+        for(const target of rule.collapse){
+            for(const element of document.querySelectorAll(collapseSourceSelector(target))){
+                const node = element.previousElementSibling || element;
+                markCollapse(node, rule.key);
+            }
+        }
+    }
+}
+
+//The widget itself, using :has() where available and a parent walk where it is not.
+function collapseSourceSelector(target){
+    return supportsHasSelector() ? targetSelector(target) : target.selector;
+}
+
+function markCollapse(node, key){
+    const marked = (node.getAttribute("data-gsc-collapse") || "").split(/\s+/).filter(Boolean);
+
+    if(marked.includes(key))
+        return;
+
+    marked.push(key);
+    node.setAttribute("data-gsc-collapse", marked.join(" "));
+}
+
+
+//Fallback for browsers without :has()//////////////////////////////////////////////////
+
+//Everything expressed with hops or an ancestor needs :has(). On a browser that lacks it
+//those rules are left out of the stylesheet and applied here instead, the way the whole
+//extension used to work. Plain selectors are handled by CSS on every browser.
+function hideWithoutHasSupport(configuration){
+    const context = { isShoppingTab: isShoppingTab() };
+
+    for(const rule of REMOVAL_RULES){
+        if(!ruleIsEnabled(rule, configuration, context))
+            continue;
+
+        for(const target of rule.targets){
+            if(!targetNeedsHas(target))
+                continue;
+
+            if(target.ancestor)
+                hideMatchingAncestor(target.selector, target.ancestor);
             else
-                node.style.margin = "0px";
+                hideParent(target.selector, target.hops);
         }
     }
 }
 
-function removePaddingBeforeWidget(name, parentNum){
-    let elements = document.querySelectorAll(name);
+function hideParent(selector, hops){
+    attempt("hideParent(" + selector + ", " + hops + ")", function(){
+        for(const element of document.querySelectorAll(selector)){
+            const node = getParentNode(element, hops);
 
-    for (let i = 0; i < elements.length; i++){
-        let node = getParentNode(elements[i], parentNum);
-
-        if(node != undefined){
-            let prevNode = node.previousElementSibling;
-            if(prevNode != undefined)
-                prevNode.style.margin = "0px";
-            else
-                node.style.margin = "0px";
-        }
-    }    
-}
-
-function setUrlColor(urlColor){
-    if(urlColor != ""){
-        let listOfElementLists = [
-            document.getElementsByClassName("qLRx3b"), //url part
-            document.getElementsByClassName("ylgVCe"), //url part
-        ]
-
-        //Set the text color for each element.
-        forEachDoThis(listOfElementLists, function(element){
-            element.style.color = urlColor;
-        });
-
-        //Apply to the child of byrV5b //Not the nicest implementation but it's good enough for now.
-        const elements = document.getElementsByClassName("byrV5b");
-        for(element of elements){
-            for(child of element.childNodes){
-                child.style.color = urlColor;
-            }
-        }
-    }
-}
-
-function setUrlColorAds(urlColor){
-    if(urlColor != ""){
-        let urls = document.getElementsByClassName("x2VHCd"); 
-
-        for(let i = 0; urls.length > i; i++)
-            urls[i].style.color = urlColor;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-
-//Utils/////////////////////////////////////////////////////////////////////////
-
-function removeElements(selector, parentNum, text){
-    const elements = document.querySelectorAll(selector);
-    for (let i = 0; i < elements.length; i++){
-        let node;
-        if(parentNum == -1)
-            node = elements[i];
-        else
-            node = getParentNode(elements[i], parentNum);
-
-        if(nonde.text.toLowerCase() == text.toLowerCase())
-            node.style.display = 'none';
-    }
-}
-
-function removeElements(selector, parentNum){
-    const elements = document.querySelectorAll(selector);
-
-    for (let i = 0; i < elements.length; i++){
-        let node = getParentNode(elements[i], parentNum);
-        node.style.display = 'none';
-    }
-}
-
-function removeElementsFromTo(name, parentName, maxParentNum){
-    if(name[0] == '.'){
-        name = name.replace('.', '');
-        const elements = document.getElementsByClassName(name);
-
-        for (let i = 0; i < elements.length; i++){
-            let node = getParentNodeFromTo(elements[i], parentName, maxParentNum);
-            if(node != null)
+            if(isSafeToHide(node))
                 node.style.display = 'none';
         }
-    }else if(name[0] == '#'){
-        name = name.replace('#', '');
-        const element = document.getElementById(name);
+    });
+}
 
-        if(element != null){
-            let node = getParentNodeFromTo(element, parentName, maxParentNum);
-            if(node != null)
+function hideMatchingAncestor(selector, ancestorSelector){
+    attempt("hideMatchingAncestor(" + selector + ", " + ancestorSelector + ")", function(){
+        for(const element of document.querySelectorAll(selector)){
+            const node = element.parentElement != null ? element.parentElement.closest(ancestorSelector) : null;
+
+            if(isSafeToHide(node))
                 node.style.display = 'none';
         }
-    }else{
-        throw "Undefined element!";
-    }
+    });
 }
 
-function getParentNodeFromTo(element, parentName, maxParentNum){
-    let parent = element;
-    let returnParent = null;
-
-    for(let i = 0; maxParentNum > i; i++){
-        parent = parent.parentNode;
-        
-        if(parentName[0] == '.'){
-            let parentNameTrimmed = parentName.substring(1)
-            if(parent.className.includes(parentNameTrimmed)){
-                returnParent = parent;
-                break;
-            } 
-        }else if(parentName[0] == '#'){
-            if(parentName == '#' + parent.id){
-                returnParent = parent;
-                break;
-            } 
-        }
-    }
-
-    return returnParent;
-}
-
+//Walks up parentNum levels and returns what it lands on.
+//
+//The hop counts go as high as 16 and were counted by hand against Google's markup, so
+//overshooting is a question of when rather than if. Walking parentElement stops cleanly at
+//<html>; parentNode used to carry on to the document and then to null, where it threw.
 function getParentNode(element, parentNum){
     let parent = element;
 
-    for(let i = 0; parentNum > i; i++)
-        parent = parent.parentNode;
+    for(let i = 0; parentNum > i && parent.parentElement != null; i++)
+        parent = parent.parentElement;
 
     return parent;
 }
 
-function ApplyToClass(className, delegate){
-    let elements = document.getElementsByClassName(className);
-
-    for (let i = 0; i < elements.length; i++)
-        delegate(elements[i]);
+//A hop count that overshoots lands on <html>. Hiding <html> or <body> would blank the page,
+//and no widget is either of those, so treat landing on one as the miss that it is.
+function isSafeToHide(node){
+    return node != null && node !== document.documentElement && node !== document.body;
 }
 
-function forEachDoThis(listOfElementLists, delegate){
-    for(let elementList of listOfElementLists){
-        for(element of elementList){
-            delegate(element);
-        }
+
+//Emoji removal/////////////////////////////////////////////////////////////////////////
+
+//Matches one emoji, including the multi code point kinds: a base symbol followed by any
+//number of variation selectors, skin tone modifiers, or zero width joiner sequences. They
+//have to be consumed as a unit, otherwise stripping the base leaves orphaned modifiers
+//behind.
+//
+//This replaced a set of hand written code point ranges. [\u2011-\u26FF] alone covered 1775
+//code points - General Punctuation, Letterlike Symbols, Arrows and Mathematical Operators
+//among them - so it deleted en dashes, curly quotes, ellipses and arrows out of ordinary
+//result titles. [\uE000-\uF8FF] added the Private Use Area on top of that.
+const EMOJI_PATTERN = /(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:[\uFE0E\uFE0F]|[\u{1F3FB}-\u{1F3FF}]|\u200D(?:\p{Extended_Pictographic}|\p{Emoji_Presentation}))*/gu;
+
+//Unicode classifies these three as pictographic, but in a search result they are ordinary
+//text and get left alone.
+const NOT_ACTUALLY_EMOJI = /^[©®™]$/;
+
+function removeEmojis(){
+    for(const className of EMOJI_TEXT_CLASSES){
+        //Snapshot the collection first: getElementsByClassName is live, and rewriting an
+        //element's text can shift it out from under the iteration.
+        for(const element of Array.from(document.getElementsByClassName(className)))
+            removeEmojisFrom(element);
     }
 }
 
-function insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+//Strips emojis from the text inside an element, leaving its markup intact.
+//
+//This used to assign to element.innerText, which replaces every child node with a single
+//text node. The elements it runs against are not plain text - .VwiC3b is the result
+//snippet, where Google wraps matched search terms in <em>, and .LC20lb titles can contain
+//nested links - so all of that was being flattened. Rewriting individual text nodes touches
+//only the characters.
+//
+//Note that this is the one setting a reload cannot undo on the spot: the original text is
+//gone once it has been rewritten.
+function removeEmojisFrom(element){
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+
+    for(let node = walker.nextNode(); node != null; node = walker.nextNode()){
+        const cleanedString = node.nodeValue.replace(EMOJI_PATTERN, function(match){
+            return NOT_ACTUALLY_EMOJI.test(match) ? match : '';
+        });
+
+        if(node.nodeValue != cleanedString)
+            node.nodeValue = cleanedString;
+    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+
+//Utils/////////////////////////////////////////////////////////////////////////////////
+
+//Runs an action once the DOM can be queried, immediately if it already can.
+function whenDomReady(action){
+    if(document.readyState === "loading")
+        document.addEventListener('DOMContentLoaded', action, { once: true });
+    else
+        action();
+}
+
+//Runs one step and keeps any failure contained to it.
+//
+//Applying a configuration is a sequence of independent steps, so without this an exception
+//from one of them took the rest down with it. Nothing surfaced either - the call comes from
+//a chrome.storage callback, so the error went to a console nobody is looking at while the
+//user just saw unrelated settings stop working.
+function attempt(description, action){
+    try{
+        action();
+    }catch(error){
+        console.warn("Google Search Customizer: " + description + " failed.", error);
+    }
+}
+
+
+//Go///////////////////////////////////////////////////////////////////////////////////
+//
+//Last, so that every const and let above is initialised before anything reads it.
+
+if(isGoogleDomain()){
+    //The stylesheet is inert until a gating class appears on <html>, so it is safe to inject
+    //before anything is known about the configuration or even about the page. Doing it here,
+    //at document_start, is what stops content being visible before it is hidden.
+    injectRemovalStyleSheet();
+
+    //Registered before the page is confirmed as a results page, because it has to go on
+    //synchronously - the popup may send at any time. receivedMessage re-checks the gate.
+    chrome.runtime.onMessage.addListener(receivedMessage);
+
+    whenSearchPageConfirmed(start);
+}
