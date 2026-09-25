@@ -29,6 +29,7 @@ window.addEventListener('load', (event) => {
         "siteFavicons": false,
         "videoTumbnails": false,
         "aiModeTab": false,
+        "shortVideosWidget": false,
         "theme": "light",
         "relatedProductsServicesWidget": false,
         "placesToVisitWidget": false
@@ -176,6 +177,10 @@ window.addEventListener('load', (event) => {
             changeConfig("aiModeTab", event.target.checked);
         });
 
+        document.getElementById("shortVideosWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("shortVideosWidget", event.target.checked);
+        });
+
         document.getElementById("aboutWidgetCheckBox").addEventListener("change", event =>{
             changeConfig("aboutWidget", event.target.checked);
         });
@@ -244,6 +249,7 @@ window.addEventListener('load', (event) => {
                 "siteFavicons": false,
                 "videoTumbnails": false,
                 "aiModeTab": false,
+                "shortVideosWidget": false,
                 "aboutWidget": false,
                 "popularExploreBuyWidget": false,
                 "theme": "light",
@@ -304,6 +310,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("siteFaviconsCheckBox").checked = configuration.siteFavicons;
         document.getElementById("videoTumbnailsCheckBox").checked = configuration.videoTumbnails;
         document.getElementById("aiModeTabCheckBox").checked = configuration.aiModeTab;
+        document.getElementById("shortVideosWidgetCheckBox").checked = configuration.shortVideosWidget;
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
         document.getElementById("relatedProductsServicesWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;

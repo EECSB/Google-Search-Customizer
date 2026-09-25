@@ -55,6 +55,7 @@ if(checkIfRun()){
         "popularExploreBuyWidget": false,
         "theme": "light",
         "aiModeTab": false,
+        "shortVideosWidget": false,
         "relatedProductsServicesWidget": false,
         "placesToVisitWidget": false
     };
@@ -343,6 +344,10 @@ function modifySearchResults(configuration){
         //removePaddingBeforeWidget(".uVMCKf", 2);
     }
 
+    if(configuration.shortVideosWidget){
+        removeShortVideosWidget();
+    }
+
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
@@ -582,6 +587,34 @@ function removeAiModeTab(){
 
         node.style.display = 'none';
     }
+}
+
+//Removes the "Short videos" widget(the carousel of short clips with the "More short videos" button under it). The widget
+//links to the Short videos tab(udm=39), which is a lot more stable than the generated class names around it.
+function removeShortVideosWidget(){
+    //The widget is only shown in the "All" tab, in the Short videos tab itself these links are the results.
+    if(getUrlParameter(window.location.search, "udm") == "39")
+        return;
+
+    const links = document.querySelectorAll('a[href*="udm=39"]');
+
+    for(let link of links){
+        //Skip links that only contain "udm=39" as part of some other value(udm=390, ...).
+        if(getUrlParameter(link.search, "udm") != "39")
+            continue;
+
+        //Leave the "Short videos" tab in the tab bar alone, it isn't the widget.
+        if(link.closest('[role="navigation"]') != null)
+            continue;
+
+        const widget = link.closest(".MjjYud, .ULSxyf, .g");
+
+        if(widget != null && !isResultsContainer(widget))
+            widget.style.display = 'none';
+    }
+
+    //Fallback for when the "More short videos" button isn't shown under the carousel.
+    removeElementsFromTo(".XNfAUb", ".MjjYud", 6);
 }
 
 function setUrlColor(urlColor){
