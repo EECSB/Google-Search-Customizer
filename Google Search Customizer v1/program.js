@@ -368,7 +368,8 @@ function modifySearchResults(configuration){
         removeElements(".dnXCYb", 7);
     }
 
-    if(configuration.imagesWidget){
+    //Not in the Images tab as the images are the search results there.
+    if(configuration.imagesWidget && !isImagesTab()){
         removeElements("#iur", 3);
         removeElements(".hisnlb", 8); 
         
@@ -454,7 +455,8 @@ function modifySearchResults(configuration){
 
 
     //Images next to/in some search results
-    if(configuration.images){
+    //Not in the Images tab as the images are the search results there.
+    if(configuration.images && !isImagesTab()){
         removeElements(".LnCrMe", 0);
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
@@ -715,6 +717,12 @@ function insertAfter(newNode, referenceNode) {
 //Gets the value of a parameter from the query string of an url(the "search" part of window.location or of a link).
 function getUrlParameter(search, name){
     return new URLSearchParams(search).get(name);
+}
+
+//udm=2 selects the Images tab(tbm=isch is the older parameter for it).
+//Just checking if the url includes "udm=2" isn't enough as that would also match udm=28(the Shopping tab).
+function isImagesTab(){
+    return getUrlParameter(window.location.search, "udm") == "2" || getUrlParameter(window.location.search, "tbm") == "isch";
 }
 
 /////////////////////////////////////////////////////////////////////////////////
