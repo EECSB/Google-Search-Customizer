@@ -371,7 +371,8 @@ function modifySearchResults(configuration){
         removePaddingBeforeWidget(".NfrtPd.UE0K3b.QsV5nc", 7);
     }
 
-    if(configuration.thingsToKnowWidget){
+    //Not in the Shopping tab as the widget is only in the "All" tab, there its class is on the filters.
+    if(configuration.thingsToKnowWidget && !isShoppingTab()){
         removeElements(".dnXCYb", 7);
     }
 
@@ -434,7 +435,8 @@ function modifySearchResults(configuration){
     
     //Not in the Shopping tab as the products are the search results there.
     if(configuration.popularExploreBuyWidget && !isShoppingTab()){
-        removeElements(".ednlu.GAJC", 8);//removeElements(".aJegcc", 1);
+        //Going a fixed number of parents up from ".ednlu.GAJC" now reaches #rso(all of the results), so hide the result block around it instead("Popular products", "More products").
+        removeClosestParents(".ednlu.GAJC", ".MjjYud");//removeElements(".aJegcc", 1);
         removeElements(".OTMJR.IFnjPb.SlP8xc.RES9jf", 4);
         removeElements("#sho-qu__spinnerContainer", 8);
     }
@@ -675,6 +677,18 @@ function isResultsContainer(node){
     const containers = '#center_col, #rso, #search, [role="main"]';
 
     return node.matches(containers) || node.querySelector(containers) != null;
+}
+
+//Hides the closest parent matching parentSelector of every element matching selector.
+function removeClosestParents(selector, parentSelector){
+    const elements = document.querySelectorAll(selector);
+
+    for (let i = 0; i < elements.length; i++){
+        const node = elements[i].closest(parentSelector);
+
+        if(node != null && !isResultsContainer(node))
+            node.style.display = 'none';
+    }
 }
 
 function removeElementsFromTo(name, parentName, maxParentNum){
