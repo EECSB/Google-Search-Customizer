@@ -421,7 +421,8 @@ function modifySearchResults(configuration){
         removeElements(".DDKf1c", 0);
     }
 
-    if(configuration.aboutWidget){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
+    //Not in the Images and Shopping tabs as the "About" widget is only in the "All" tab, there its classes are on the results and the filter chips.
+    if(configuration.aboutWidget && !isImagesTab() && !isShoppingTab()){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
         removeElements(".bzXtMb", 0);
         removeElements(".yTFeqb.wp-ms.oJxARb.nBWfrd.VE2Ztc", 3);
         removeElements(".GJi8Lc", 6);
@@ -431,24 +432,11 @@ function modifySearchResults(configuration){
     }
 
     
-    if(configuration.popularExploreBuyWidget){
+    //Not in the Shopping tab as the products are the search results there.
+    if(configuration.popularExploreBuyWidget && !isShoppingTab()){
         removeElements(".ednlu.GAJC", 8);//removeElements(".aJegcc", 1);
         removeElements(".OTMJR.IFnjPb.SlP8xc.RES9jf", 4);
-        
-        //Determmine if we are in the shopping tab.
-        const searchForm = document.getElementById("searchform");
-        if (searchForm) {
-            let isShoppingTab = false;
-            const links = searchForm.getElementsByTagName("a");
-            for (let link of links) {
-                if (link.href.includes("/shopping?sca_esv")) {
-                    isShoppingTab = true;
-                }
-            }
-
-            if(!isShoppingTab)
-                removeElements("#sho-qu__spinnerContainer", 8);
-        }
+        removeElements("#sho-qu__spinnerContainer", 8);
     }
 
 
@@ -812,6 +800,24 @@ function getUrlParameter(search, name){
 //Just checking if the url includes "udm=2" isn't enough as that would also match udm=28(the Shopping tab).
 function isImagesTab(){
     return getUrlParameter(window.location.search, "udm") == "2" || getUrlParameter(window.location.search, "tbm") == "isch";
+}
+
+//udm=28 selects the Shopping tab(tbm=shop is the older parameter for it).
+function isShoppingTab(){
+    if(getUrlParameter(window.location.search, "udm") == "28" || getUrlParameter(window.location.search, "tbm") == "shop")
+        return true;
+
+    //Older layouts of the Shopping tab link to "/shopping" from the search form.
+    const searchForm = document.getElementById("searchform");
+    if(searchForm != null){
+        const links = searchForm.getElementsByTagName("a");
+        for(let link of links){
+            if(link.href.includes("/shopping?sca_esv"))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
