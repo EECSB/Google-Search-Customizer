@@ -680,10 +680,11 @@ function removeElements(selector, parentNum){
 }
 
 //Google reuses some of its classes on the containers that hold all of the search results. "bzXtMb" for
-//example marks the "About" widget in the "All" tab, but in the "Images" tab it's on #center_col itself.
+//example marks the "About" widget in the "All" tab, but in the "Images" tab it's on #center_col itself and
+//in AI Mode it's on a container around the whole answer(AI Mode has no #center_col, only the main landmark).
 //Hiding a container like that removes every result on the page, so never do it.
 function isResultsContainer(node){
-    const containers = "#center_col, #rso, #search";
+    const containers = '#center_col, #rso, #search, [role="main"]';
 
     return node.matches(containers) || node.querySelector(containers) != null;
 }
