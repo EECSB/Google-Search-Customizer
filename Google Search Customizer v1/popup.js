@@ -337,7 +337,12 @@ window.addEventListener('load', (event) => {
 
     function sendToProgramJS(payload){
         chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-            chrome.tabs.sendMessage(tabs[0].id, payload); ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+            chrome.tabs.sendMessage(tabs[0].id, payload, function(){
+                //Pages without the content script(browser pages, tabs opened before the extension was installed, ...) can't receive the message.
+                //That's expected, checking lastError marks the error as handled so it doesn't get logged.
+                if(chrome.runtime.lastError)
+                    return;
+            });
         });
     }
 

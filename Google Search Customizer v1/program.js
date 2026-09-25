@@ -112,7 +112,9 @@ if(checkIfRun()){
 chrome.runtime.onMessage.addListener(receivedMessage);
 
 function receivedMessage(message, sender, response){
-    modifySearchResults(message["configuration"]);
+    //This script is loaded on every page, so only apply the changes if this is the Google search results page(and not some other site that happens to be open when the settings are changed).
+    if(checkIfRun())
+        modifySearchResults(message["configuration"]);
 }
 
 /////////////////////////////////////////////////////////////////////////
