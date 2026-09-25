@@ -509,11 +509,15 @@ function modifySearchResults(configuration){
             document.getElementsByClassName("VwiC3b")
         ]; 
 
-        //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
+        //For each element remove the emojis from its text. Only the text nodes are changed so the markup inside the element(bold search terms, links, ...) is kept.
         forEachDoThis(listOfElementLists, function(element){
-            const cleanedString =element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-            if(element.innerText != cleanedString)
-                element.innerText = cleanedString;
+            const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+            while(walker.nextNode()){
+                const textNode = walker.currentNode;
+                const cleanedString = removeEmojisFromText(textNode.nodeValue);
+                if(textNode.nodeValue != cleanedString)
+                    textNode.nodeValue = cleanedString;
+            }
         });
     }
 }
@@ -712,6 +716,34 @@ function forEachDoThis(listOfElementLists, delegate){
 
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+//Removes the emojis from the text but keeps other symbols(quotes, dashes, ellipsis, currency signs, trademark/copyright signs, arrows, stars, check marks, ...).
+function removeEmojisFromText(text){
+    //Pictographs with their skin tones, variation selectors and tags(subdivision flags) and ZWJ sequences of them(like the family emoji: man ZWJ woman ZWJ girl).
+    const pictographSequences = /\p{Extended_Pictographic}[\p{Emoji_Modifier}\uFE0E\uFE0F\u{E0020}-\u{E007F}]*(?:\u200D\p{Extended_Pictographic}[\p{Emoji_Modifier}\uFE0E\uFE0F\u{E0020}-\u{E007F}]*)*/gu;
+
+    return text
+        .replace(pictographSequences, function(sequence){
+            //ZWJ sequences, skin tones and U+FE0F(emoji variation selector) always make it an emoji.
+            if(/[\u200D\uFE0F\p{Emoji_Modifier}]/u.test(sequence))
+                return '';
+
+            //U+FE0E(text variation selector) makes it text.
+            if(sequence.includes('\uFE0E'))
+                return sequence;
+
+            //Otherwise it depends on the symbol: smileys, U+2B50(star), U+2705(check mark button), ... are shown as emojis
+            //while U+2122(trademark), U+00A9(copyright), U+2194(left right arrow), U+2764(heart), ... are shown as text(unless followed by U+FE0F).
+            //Pictographs outside the BMP(U+1F3F3 white flag, U+1F170 "A" button, ...) have no text version in regular fonts so they are always shown as emojis.
+            return /^(?:\p{Emoji_Presentation}|[\u{10000}-\u{10FFFF}])/u.test(sequence) ? '' : sequence;
+        })
+        //Flags(made of two regional indicator letters).
+        .replace(/\p{Regional_Indicator}/gu, '')
+        //Keycaps(digit/#/* + U+FE0F + U+20E3), keep the digit/symbol itself.
+        .replace(/([#*0-9])\uFE0F?\u20E3/g, '$1')
+        //Leftover skin tones, emoji variation selectors and tags.
+        .replace(/[\p{Emoji_Modifier}\uFE0F\u{E0020}-\u{E007F}]/gu, '');
 }
 
 //Gets the value of a parameter from the query string of an url(the "search" part of window.location or of a link).
