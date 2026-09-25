@@ -485,7 +485,7 @@ function modifySearchResults(configuration){
 
     //Remove Ai Mode tab
     if(configuration.aiModeTab){
-        removeElements(".olrp5b", 2);
+        removeAiModeTab();
     }
     
     //Color Url////////////////////////////////////////////////////////////////
@@ -552,6 +552,28 @@ function removePaddingBeforeWidget(name, parentNum){
                 node.style.margin = "0px";
         }
     }    
+}
+
+function removeAiModeTab(){
+    //Don't remove anything if AI Mode itself is open.
+    if(getUrlParameter(window.location.search, "udm") == "50")
+        return;
+
+    //The class names of the tab keep changing(".olrp5b" doesn't work anymore), so look for the links to AI Mode instead as they always have the udm=50 url parameter.
+    const links = document.querySelectorAll('a[href*="udm=50"]');
+
+    for(let link of links){
+        //Skip links that only contain "udm=50" as part of some other value(udm=500, ...).
+        if(getUrlParameter(link.search, "udm") != "50")
+            continue;
+
+        //Remove the whole tab if the link is in the tab bar, otherwise remove just the link(for example the "Dive deeper in AI Mode" button).
+        let node = link.closest('[role="navigation"] [role="listitem"]');
+        if(node == null)
+            node = link;
+
+        node.style.display = 'none';
+    }
 }
 
 function setUrlColor(urlColor){
@@ -688,6 +710,11 @@ function forEachDoThis(listOfElementLists, delegate){
 
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+//Gets the value of a parameter from the query string of an url(the "search" part of window.location or of a link).
+function getUrlParameter(search, name){
+    return new URLSearchParams(search).get(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
