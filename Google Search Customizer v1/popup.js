@@ -307,7 +307,7 @@ window.addEventListener('load', (event) => {
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
         document.getElementById("relatedProductsServicesWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
-        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
+        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.placesToVisitWidget;
         
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;
