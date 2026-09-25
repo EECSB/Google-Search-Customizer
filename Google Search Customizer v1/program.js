@@ -640,8 +640,19 @@ function removeElements(selector, parentNum){
 
     for (let i = 0; i < elements.length; i++){
         let node = getParentNode(elements[i], parentNum);
-        node.style.display = 'none';
+
+        if(!isResultsContainer(node))
+            node.style.display = 'none';
     }
+}
+
+//Google reuses some of its classes on the containers that hold all of the search results. "bzXtMb" for
+//example marks the "About" widget in the "All" tab, but in the "Images" tab it's on #center_col itself.
+//Hiding a container like that removes every result on the page, so never do it.
+function isResultsContainer(node){
+    const containers = "#center_col, #rso, #search";
+
+    return node.matches(containers) || node.querySelector(containers) != null;
 }
 
 function removeElementsFromTo(name, parentName, maxParentNum){
@@ -673,11 +684,15 @@ function getParentNodeFromTo(element, parentName, maxParentNum){
     let returnParent = null;
 
     for(let i = 0; maxParentNum > i; i++){
-        parent = parent.parentNode;
-        
+        parent = parent.parentElement;
+
+        //Stop at the top of the document instead of throwing.
+        if(parent == null)
+            break;
+
         if(parentName[0] == '.'){
             let parentNameTrimmed = parentName.substring(1)
-            if(parent.className.includes(parentNameTrimmed)){
+            if(typeof parent.className == 'string' && parent.className.includes(parentNameTrimmed)){
                 returnParent = parent;
                 break;
             } 
@@ -695,8 +710,14 @@ function getParentNodeFromTo(element, parentName, maxParentNum){
 function getParentNode(element, parentNum){
     let parent = element;
 
-    for(let i = 0; parentNum > i; i++)
-        parent = parent.parentNode;
+    for(let i = 0; parentNum > i; i++){
+        //Stop at the top of the document. Going past it returns nodes without a style to set,
+        //which throws and aborts every option that is applied after this one.
+        if(parent.parentElement == null)
+            break;
+
+        parent = parent.parentElement;
+    }
 
     return parent;
 }
