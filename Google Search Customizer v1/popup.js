@@ -29,6 +29,7 @@ window.addEventListener('load', (event) => {
         "siteFavicons": false,
         "videoTumbnails": false,
         "aiModeTab": false,
+        "shortVideosWidget": false,
         "theme": "light",
         "relatedProductsServicesWidget": false,
         "placesToVisitWidget": false
@@ -176,6 +177,10 @@ window.addEventListener('load', (event) => {
             changeConfig("aiModeTab", event.target.checked);
         });
 
+        document.getElementById("shortVideosWidgetCheckBox").addEventListener("change", event =>{
+            changeConfig("shortVideosWidget", event.target.checked);
+        });
+
         document.getElementById("aboutWidgetCheckBox").addEventListener("change", event =>{
             changeConfig("aboutWidget", event.target.checked);
         });
@@ -244,6 +249,7 @@ window.addEventListener('load', (event) => {
                 "siteFavicons": false,
                 "videoTumbnails": false,
                 "aiModeTab": false,
+                "shortVideosWidget": false,
                 "aboutWidget": false,
                 "popularExploreBuyWidget": false,
                 "theme": "light",
@@ -304,10 +310,11 @@ window.addEventListener('load', (event) => {
         document.getElementById("siteFaviconsCheckBox").checked = configuration.siteFavicons;
         document.getElementById("videoTumbnailsCheckBox").checked = configuration.videoTumbnails;
         document.getElementById("aiModeTabCheckBox").checked = configuration.aiModeTab;
+        document.getElementById("shortVideosWidgetCheckBox").checked = configuration.shortVideosWidget;
         document.getElementById("aboutWidgetCheckBox").checked = configuration.aboutWidget;
         document.getElementById("popularExploreBuyWidgetCheckBox").checked = configuration.popularExploreBuyWidget;
         document.getElementById("relatedProductsServicesWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
-        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.relatedProductsServicesWidget;
+        document.getElementById("placesToVisitWidgetCheckBox").checked = configuration.placesToVisitWidget;
         
         document.getElementById("adBackgroundColorSelection").value = configuration.adBackgroundColor;
         document.getElementById("urlColorSelection").value = configuration.urlColor;
@@ -337,7 +344,12 @@ window.addEventListener('load', (event) => {
 
     function sendToProgramJS(payload){
         chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
-            chrome.tabs.sendMessage(tabs[0].id, payload); ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+            chrome.tabs.sendMessage(tabs[0].id, payload, function(){
+                //Pages without the content script(browser pages, tabs opened before the extension was installed, ...) can't receive the message.
+                //That's expected, checking lastError marks the error as handled so it doesn't get logged.
+                if(chrome.runtime.lastError)
+                    return;
+            });
         });
     }
 

@@ -55,6 +55,7 @@ if(checkIfRun()){
         "popularExploreBuyWidget": false,
         "theme": "light",
         "aiModeTab": false,
+        "shortVideosWidget": false,
         "relatedProductsServicesWidget": false,
         "placesToVisitWidget": false
     };
@@ -112,7 +113,9 @@ if(checkIfRun()){
 chrome.runtime.onMessage.addListener(receivedMessage);
 
 function receivedMessage(message, sender, response){
-    modifySearchResults(message["configuration"]);
+    //This script is loaded on every page, so only apply the changes if this is the Google search results page(and not some other site that happens to be open when the settings are changed).
+    if(checkIfRun())
+        modifySearchResults(message["configuration"]);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -341,6 +344,10 @@ function modifySearchResults(configuration){
         //removePaddingBeforeWidget(".uVMCKf", 2);
     }
 
+    if(configuration.shortVideosWidget){
+        removeShortVideosWidget();
+    }
+
     if(configuration.sideBarWidget){
         removeElements(".liYKde", 1);
         removeElements(".Lj180d", 6);
@@ -364,11 +371,13 @@ function modifySearchResults(configuration){
         removePaddingBeforeWidget(".NfrtPd.UE0K3b.QsV5nc", 7);
     }
 
-    if(configuration.thingsToKnowWidget){
+    //Not in the Shopping tab as the widget is only in the "All" tab, there its class is on the filters.
+    if(configuration.thingsToKnowWidget && !isShoppingTab()){
         removeElements(".dnXCYb", 7);
     }
 
-    if(configuration.imagesWidget){
+    //Not in the Images tab as the images are the search results there.
+    if(configuration.imagesWidget && !isImagesTab()){
         removeElements("#iur", 3);
         removeElements(".hisnlb", 8); 
         
@@ -413,7 +422,8 @@ function modifySearchResults(configuration){
         removeElements(".DDKf1c", 0);
     }
 
-    if(configuration.aboutWidget){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
+    //Not in the Images and Shopping tabs as the "About" widget is only in the "All" tab, there its classes are on the results and the filter chips.
+    if(configuration.aboutWidget && !isImagesTab() && !isShoppingTab()){ //Removes cast, movie/games reviews, key moments video section in search result, Episodes,
         removeElements(".bzXtMb", 0);
         removeElements(".yTFeqb.wp-ms.oJxARb.nBWfrd.VE2Ztc", 3);
         removeElements(".GJi8Lc", 6);
@@ -423,24 +433,12 @@ function modifySearchResults(configuration){
     }
 
     
-    if(configuration.popularExploreBuyWidget){
-        removeElements(".ednlu.GAJC", 8);//removeElements(".aJegcc", 1);
+    //Not in the Shopping tab as the products are the search results there.
+    if(configuration.popularExploreBuyWidget && !isShoppingTab()){
+        //Going a fixed number of parents up from ".ednlu.GAJC" now reaches #rso(all of the results), so hide the result block around it instead("Popular products", "More products").
+        removeClosestParents(".ednlu.GAJC", ".MjjYud");//removeElements(".aJegcc", 1);
         removeElements(".OTMJR.IFnjPb.SlP8xc.RES9jf", 4);
-        
-        //Determmine if we are in the shopping tab.
-        const searchForm = document.getElementById("searchform");
-        if (searchForm) {
-            let isShoppingTab = false;
-            const links = searchForm.getElementsByTagName("a");
-            for (let link of links) {
-                if (link.href.includes("/shopping?sca_esv")) {
-                    isShoppingTab = true;
-                }
-            }
-
-            if(!isShoppingTab)
-                removeElements("#sho-qu__spinnerContainer", 8);
-        }
+        removeElements("#sho-qu__spinnerContainer", 8);
     }
 
 
@@ -454,7 +452,8 @@ function modifySearchResults(configuration){
 
 
     //Images next to/in some search results
-    if(configuration.images){
+    //Not in the Images tab as the images are the search results there.
+    if(configuration.images && !isImagesTab()){
         removeElements(".LnCrMe", 0);
         removeElements(".Sth6v", 0);
         removeElements(".AzcMvf", 1);
@@ -485,7 +484,7 @@ function modifySearchResults(configuration){
 
     //Remove Ai Mode tab
     if(configuration.aiModeTab){
-        removeElements(".olrp5b", 2);
+        removeAiModeTab();
     }
     
     //Color Url////////////////////////////////////////////////////////////////
@@ -507,11 +506,15 @@ function modifySearchResults(configuration){
             document.getElementsByClassName("VwiC3b")
         ]; 
 
-        //For each element take it's inner text replace any emojis with '' and save the new string back into the element.
+        //For each element remove the emojis from its text. Only the text nodes are changed so the markup inside the element(bold search terms, links, ...) is kept.
         forEachDoThis(listOfElementLists, function(element){
-            const cleanedString =element.innerText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-            if(element.innerText != cleanedString)
-                element.innerText = cleanedString;
+            const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+            while(walker.nextNode()){
+                const textNode = walker.currentNode;
+                const cleanedString = removeEmojisFromText(textNode.nodeValue);
+                if(textNode.nodeValue != cleanedString)
+                    textNode.nodeValue = cleanedString;
+            }
         });
     }
 }
@@ -554,6 +557,56 @@ function removePaddingBeforeWidget(name, parentNum){
     }    
 }
 
+function removeAiModeTab(){
+    //Don't remove anything if AI Mode itself is open.
+    if(getUrlParameter(window.location.search, "udm") == "50")
+        return;
+
+    //The class names of the tab keep changing(".olrp5b" doesn't work anymore), so look for the links to AI Mode instead as they always have the udm=50 url parameter.
+    const links = document.querySelectorAll('a[href*="udm=50"]');
+
+    for(let link of links){
+        //Skip links that only contain "udm=50" as part of some other value(udm=500, ...).
+        if(getUrlParameter(link.search, "udm") != "50")
+            continue;
+
+        //Remove the whole tab if the link is in the tab bar, otherwise remove just the link(for example the "Dive deeper in AI Mode" button).
+        let node = link.closest('[role="navigation"] [role="listitem"]');
+        if(node == null)
+            node = link;
+
+        node.style.display = 'none';
+    }
+}
+
+//Removes the "Short videos" widget(the carousel of short clips with the "More short videos" button under it). The widget
+//links to the Short videos tab(udm=39), which is a lot more stable than the generated class names around it.
+function removeShortVideosWidget(){
+    //The widget is only shown in the "All" tab, in the Short videos tab itself these links are the results.
+    if(getUrlParameter(window.location.search, "udm") == "39")
+        return;
+
+    const links = document.querySelectorAll('a[href*="udm=39"]');
+
+    for(let link of links){
+        //Skip links that only contain "udm=39" as part of some other value(udm=390, ...).
+        if(getUrlParameter(link.search, "udm") != "39")
+            continue;
+
+        //Leave the "Short videos" tab in the tab bar alone, it isn't the widget.
+        if(link.closest('[role="navigation"]') != null)
+            continue;
+
+        const widget = link.closest(".MjjYud, .ULSxyf, .g");
+
+        if(widget != null && !isResultsContainer(widget))
+            widget.style.display = 'none';
+    }
+
+    //Fallback for when the "More short videos" button isn't shown under the carousel.
+    removeElementsFromTo(".XNfAUb", ".MjjYud", 6);
+}
+
 function setUrlColor(urlColor){
     if(urlColor != ""){
         let listOfElementLists = [
@@ -591,26 +644,36 @@ function setUrlColorAds(urlColor){
 
 //Utils/////////////////////////////////////////////////////////////////////////
 
-function removeElements(selector, parentNum, text){
-    const elements = document.querySelectorAll(selector);
-    for (let i = 0; i < elements.length; i++){
-        let node;
-        if(parentNum == -1)
-            node = elements[i];
-        else
-            node = getParentNode(elements[i], parentNum);
-
-        if(nonde.text.toLowerCase() == text.toLowerCase())
-            node.style.display = 'none';
-    }
-}
-
 function removeElements(selector, parentNum){
     const elements = document.querySelectorAll(selector);
 
     for (let i = 0; i < elements.length; i++){
         let node = getParentNode(elements[i], parentNum);
-        node.style.display = 'none';
+
+        if(!isResultsContainer(node))
+            node.style.display = 'none';
+    }
+}
+
+//Google reuses some of its classes on the containers that hold all of the search results. "bzXtMb" for
+//example marks the "About" widget in the "All" tab, but in the "Images" tab it's on #center_col itself and
+//in AI Mode it's on a container around the whole answer(AI Mode has no #center_col, only the main landmark).
+//Hiding a container like that removes every result on the page, so never do it.
+function isResultsContainer(node){
+    const containers = '#center_col, #rso, #search, [role="main"]';
+
+    return node.matches(containers) || node.querySelector(containers) != null;
+}
+
+//Hides the closest parent matching parentSelector of every element matching selector.
+function removeClosestParents(selector, parentSelector){
+    const elements = document.querySelectorAll(selector);
+
+    for (let i = 0; i < elements.length; i++){
+        const node = elements[i].closest(parentSelector);
+
+        if(node != null && !isResultsContainer(node))
+            node.style.display = 'none';
     }
 }
 
@@ -643,11 +706,15 @@ function getParentNodeFromTo(element, parentName, maxParentNum){
     let returnParent = null;
 
     for(let i = 0; maxParentNum > i; i++){
-        parent = parent.parentNode;
-        
+        parent = parent.parentElement;
+
+        //Stop at the top of the document instead of throwing.
+        if(parent == null)
+            break;
+
         if(parentName[0] == '.'){
             let parentNameTrimmed = parentName.substring(1)
-            if(parent.className.includes(parentNameTrimmed)){
+            if(typeof parent.className == 'string' && parent.className.includes(parentNameTrimmed)){
                 returnParent = parent;
                 break;
             } 
@@ -665,8 +732,14 @@ function getParentNodeFromTo(element, parentName, maxParentNum){
 function getParentNode(element, parentNum){
     let parent = element;
 
-    for(let i = 0; parentNum > i; i++)
-        parent = parent.parentNode;
+    for(let i = 0; parentNum > i; i++){
+        //Stop at the top of the document. Going past it returns nodes without a style to set,
+        //which throws and aborts every option that is applied after this one.
+        if(parent.parentElement == null)
+            break;
+
+        parent = parent.parentElement;
+    }
 
     return parent;
 }
@@ -688,6 +761,63 @@ function forEachDoThis(listOfElementLists, delegate){
 
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+//Removes the emojis from the text but keeps other symbols(quotes, dashes, ellipsis, currency signs, trademark/copyright signs, arrows, stars, check marks, ...).
+function removeEmojisFromText(text){
+    //Pictographs with their skin tones, variation selectors and tags(subdivision flags) and ZWJ sequences of them(like the family emoji: man ZWJ woman ZWJ girl).
+    const pictographSequences = /\p{Extended_Pictographic}[\p{Emoji_Modifier}\uFE0E\uFE0F\u{E0020}-\u{E007F}]*(?:\u200D\p{Extended_Pictographic}[\p{Emoji_Modifier}\uFE0E\uFE0F\u{E0020}-\u{E007F}]*)*/gu;
+
+    return text
+        .replace(pictographSequences, function(sequence){
+            //ZWJ sequences, skin tones and U+FE0F(emoji variation selector) always make it an emoji.
+            if(/[\u200D\uFE0F\p{Emoji_Modifier}]/u.test(sequence))
+                return '';
+
+            //U+FE0E(text variation selector) makes it text.
+            if(sequence.includes('\uFE0E'))
+                return sequence;
+
+            //Otherwise it depends on the symbol: smileys, U+2B50(star), U+2705(check mark button), ... are shown as emojis
+            //while U+2122(trademark), U+00A9(copyright), U+2194(left right arrow), U+2764(heart), ... are shown as text(unless followed by U+FE0F).
+            //Pictographs outside the BMP(U+1F3F3 white flag, U+1F170 "A" button, ...) have no text version in regular fonts so they are always shown as emojis.
+            return /^(?:\p{Emoji_Presentation}|[\u{10000}-\u{10FFFF}])/u.test(sequence) ? '' : sequence;
+        })
+        //Flags(made of two regional indicator letters).
+        .replace(/\p{Regional_Indicator}/gu, '')
+        //Keycaps(digit/#/* + U+FE0F + U+20E3), keep the digit/symbol itself.
+        .replace(/([#*0-9])\uFE0F?\u20E3/g, '$1')
+        //Leftover skin tones, emoji variation selectors and tags.
+        .replace(/[\p{Emoji_Modifier}\uFE0F\u{E0020}-\u{E007F}]/gu, '');
+}
+
+//Gets the value of a parameter from the query string of an url(the "search" part of window.location or of a link).
+function getUrlParameter(search, name){
+    return new URLSearchParams(search).get(name);
+}
+
+//udm=2 selects the Images tab(tbm=isch is the older parameter for it).
+//Just checking if the url includes "udm=2" isn't enough as that would also match udm=28(the Shopping tab).
+function isImagesTab(){
+    return getUrlParameter(window.location.search, "udm") == "2" || getUrlParameter(window.location.search, "tbm") == "isch";
+}
+
+//udm=28 selects the Shopping tab(tbm=shop is the older parameter for it).
+function isShoppingTab(){
+    if(getUrlParameter(window.location.search, "udm") == "28" || getUrlParameter(window.location.search, "tbm") == "shop")
+        return true;
+
+    //Older layouts of the Shopping tab link to "/shopping" from the search form.
+    const searchForm = document.getElementById("searchform");
+    if(searchForm != null){
+        const links = searchForm.getElementsByTagName("a");
+        for(let link of links){
+            if(link.href.includes("/shopping?sca_esv"))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
