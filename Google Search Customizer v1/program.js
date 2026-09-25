@@ -644,20 +644,6 @@ function setUrlColorAds(urlColor){
 
 //Utils/////////////////////////////////////////////////////////////////////////
 
-function removeElements(selector, parentNum, text){
-    const elements = document.querySelectorAll(selector);
-    for (let i = 0; i < elements.length; i++){
-        let node;
-        if(parentNum == -1)
-            node = elements[i];
-        else
-            node = getParentNode(elements[i], parentNum);
-
-        if(nonde.text.toLowerCase() == text.toLowerCase())
-            node.style.display = 'none';
-    }
-}
-
 function removeElements(selector, parentNum){
     const elements = document.querySelectorAll(selector);
 
