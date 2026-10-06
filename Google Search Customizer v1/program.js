@@ -105,6 +105,22 @@ if(checkIfRun()){
     }
 }
 
+//Checks if this is the Google homepage(the page with just the search box). It isn't a search results page so only the homepage options are applied there.
+function checkIfHomePage(){
+    //Only the search engine itself(www.google.com, google.de, ...) and not other Google sites like myaccount.google.com.
+    if(!/^(www\.)?google\.(com?\.)?[a-z]{2,3}$/.test(window.location.hostname))
+        return false;
+
+    return window.location.pathname == "/" || window.location.pathname == "/webhp";
+}
+
+if(checkIfHomePage()){
+    chrome.storage.sync.get(['configuration'], function(storedConfiguration) {
+        if('configuration' in storedConfiguration)
+            modifyHomePage(storedConfiguration["configuration"]);
+    });
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 
@@ -116,6 +132,8 @@ function receivedMessage(message, sender, response){
     //This script is loaded on every page, so only apply the changes if this is the Google search results page(and not some other site that happens to be open when the settings are changed).
     if(checkIfRun())
         modifySearchResults(message["configuration"]);
+    else if(checkIfHomePage())
+        modifyHomePage(message["configuration"]);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -516,6 +534,36 @@ function modifySearchResults(configuration){
                     textNode.nodeValue = cleanedString;
             }
         });
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+//Homepage///////////////////////////////////////////////////////////////////////
+
+//The AI buttons on the homepage: the "AI Mode" button in the search box and the "Create images", "Ask about files" and "Brainstorm"
+//buttons under it(shown to signed in users). "I'm Feeling Lucky" is in the same row with the same class, but it also has lsjMhf so it's kept.
+const aiModeButtonsSelectors = [
+    ".plR5qb",
+    ".jLddNe:not(.lsjMhf)"
+];
+
+function modifyHomePage(configuration){
+    //Unlike the search results, the homepage redraws its buttons as you use it(after typing in the search box for example), so they are
+    //hidden with a stylesheet that keeps applying instead of hiding the elements once. Removing the stylesheet shows them again right away.
+    let style = document.getElementById("gscAiModeButtons");
+
+    if(configuration.aiModeButtons){
+        if(style == null){
+            style = document.createElement("style");
+            style.id = "gscAiModeButtons";
+            style.textContent = aiModeButtonsSelectors.join(", ") + " { display: none !important; }";
+            document.head.appendChild(style);
+        }
+    }else if(style != null){
+        style.remove();
     }
 }
 
