@@ -544,10 +544,11 @@ function modifySearchResults(configuration){
 //Homepage///////////////////////////////////////////////////////////////////////
 
 //The AI buttons on the homepage: the "AI Mode" button in the search box and the "Create images", "Ask about files" and "Brainstorm"
-//buttons under it(shown to signed in users). "I'm Feeling Lucky" is in the same row with the same class, but it also has lsjMhf so it's kept.
+//buttons under it. "I'm Feeling Lucky" is in the same row with the same class, but it also has lsjMhf(older layout) or ekr9Cb(newer layout) so it's kept.
 const aiModeButtonsSelectors = [
     ".plR5qb",
-    ".jLddNe:not(.lsjMhf)"
+    ".jLddNe:not(.lsjMhf)",
+    ".elRzpc:not(.ekr9Cb)"
 ];
 
 function modifyHomePage(configuration){
